@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether-AI — Neural Operating Interface</title>
+    <link rel="stylesheet" href="/styles/app.css">
+    <link rel="stylesheet" href="node_modules/xterm/css/xterm.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-left">
+                <span class="logo">🌌</span>
+                <h1>AETHER</h1>
+                <span class="subtitle">NEURAL OPERATING INTERFACE // DESKTOP</span>
+            </div>
+            <div class="header-right">
+                <span id="system-status" class="status">Checking...</span>
+                <button id="btn-benchmark" class="btn">📏 Benchmark</button>
+                <button id="btn-settings" class="btn">⚙️ Settings</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Neural Pathway Selection -->
+            <div id="pathway-selector" class="pathway-selector">
+                <h2>Select Neural Pathway</h2>
+                <div class="pathway-grid">
+                    <div class="pathway-card" data-tier="agent">
+                        <div class="pathway-icon">🤖</div>
+                        <h3>AGENT</h3>
+                        <p class="pathway-model">Hermes-3-8B</p>
+                        <p class="pathway-desc">Smartest. Writes code, uses tools, complex reasoning.</p>
+                        <span class="pathway-speed">10-15 t/s</span>
+                    </div>
+                    <div class="pathway-card" data-tier="turbo">
+                        <div class="pathway-icon">⚡</div>
+                        <h3>TURBO</h3>
+                        <p class="pathway-model">Llama-3.2-3B</p>
+                        <p class="pathway-desc">Fastest. Daily questions, summaries, translations.</p>
+                        <span class="pathway-speed">25+ t/s</span>
+                    </div>
+                    <div class="pathway-card" data-tier="code">
+                        <div class="pathway-icon">💻</div>
+                        <h3>CODE</h3>
+                        <p class="pathway-model">Qwen-Coder-3B</p>
+                        <p class="pathway-desc">Coding specialist. Refactor, debug, write.</p>
+                        <span class="pathway-speed">18+ t/s</span>
+                    </div>
+                    <div class="pathway-card" data-tier="logic">
+                        <div class="pathway-icon">🧠</div>
+                        <h3>LOGIC</h3>
+                        <p class="pathway-model">DeepSeek-R1</p>
+                        <p class="pathway-desc">Deep thinker. Architecture and planning.</p>
+                        <span class="pathway-speed">22+ t/s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal (hidden initially) -->
+            <div id="terminal-container" class="terminal-container hidden">
+                <div id="terminal"></div>
+                <div class="terminal-controls">
+                    <button id="btn-back" class="btn btn-small">← Back</button>
+                    <span id="tier-label" class="tier-label">AGENT (Hermes-8B)</span>
+                </div>
+            </div>
+
+            <!-- System Info Panel -->
+            <aside class="info-panel">
+                <h3>System</h3>
+                <div id="system-info" class="system-info">
+                    <p>Loading...</p>
+                </div>
+                <div class="quick-actions">
+                    <button id="btn-context7" class="btn btn-small">🧠 Context7</button>
+                    <button id="btn-tools" class="btn btn-small">🛠️ Tools</button>
+                    <button id="btn-bench" class="btn btn-small">📏 Bench</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

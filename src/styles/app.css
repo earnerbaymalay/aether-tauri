@@ -1,0 +1,157 @@
+:root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --card: #1c2333;
+    --border: #30363d;
+    --teal: #58a6ff;
+    --green: #3fb950;
+    --orange: #ffa657;
+    --purple: #bc8cff;
+    --red: #ff7b72;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --text-muted: #484f58;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo { font-size: 24px; }
+.header h1 { font-size: 18px; color: var(--teal); letter-spacing: 4px; }
+.subtitle { font-size: 10px; color: var(--text-dim); letter-spacing: 2px; }
+.header-right { display: flex; gap: 8px; align-items: center; }
+.status { font-size: 12px; color: var(--green); }
+
+/* Buttons */
+.btn {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+.btn:hover { background: var(--border); border-color: var(--teal); }
+.btn-small { padding: 4px 10px; font-size: 11px; }
+
+/* Main Content */
+.main-content {
+    display: flex;
+    height: calc(100vh - 56px);
+}
+
+/* Pathway Selector */
+.pathway-selector {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+.pathway-selector h2 {
+    font-size: 14px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+}
+
+.pathway-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.pathway-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.pathway-card:hover {
+    border-color: var(--teal);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(88, 166, 255, 0.1);
+}
+.pathway-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal), var(--purple));
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.pathway-card:hover::before { opacity: 1; }
+
+.pathway-icon { font-size: 36px; margin-bottom: 12px; }
+.pathway-card h3 { font-size: 18px; margin-bottom: 4px; }
+.pathway-model { font-size: 11px; color: var(--text-dim); font-family: monospace; margin-bottom: 12px; }
+.pathway-desc { font-size: 12px; color: var(--text-dim); line-height: 1.5; margin-bottom: 12px; }
+.pathway-speed { font-size: 11px; color: var(--green); font-weight: 600; }
+
+/* Terminal */
+.terminal-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+#terminal { flex: 1; padding: 8px; }
+.terminal-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+}
+.tier-label { font-size: 11px; color: var(--teal); font-family: monospace; }
+
+/* Info Panel */
+.info-panel {
+    width: 260px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    padding: 16px;
+    overflow-y: auto;
+}
+.info-panel h3 { font-size: 12px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 12px; }
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+}
+.info-row span:first-child { color: var(--text-dim); }
+.info-row span:last-child { color: var(--text); font-family: monospace; }
+.info-row .ok { color: var(--green); }
+.info-row .warn { color: var(--orange); }
+
+.quick-actions { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+
+.hidden { display: none !important; }
+.error { color: var(--red); }
