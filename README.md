@@ -17,70 +17,68 @@
 
 ## What is Aether?
 
-**Aether is a sovereign neural workstation.** It provides a high-autonomy interface to local AI models (Ollama, llama.cpp), giving you a private, offline command center that runs entirely on your own hardware. 
+**Aether is your sovereign neural workstation.** It's designed to be a high-autonomy bridge between you and your local LLMs. By running entirely on your own hardware, Aether ensures that your thoughts, data, and workflows remain private and offline. 
 
-This repository houses the **Tauri-based desktop workstation**, unified for both **Windows** and **macOS**.
+This repository contains the **Tauri-based desktop workstation**, offering a unified, high-performance experience for **Linux**, **Windows**, and **macOS**.
 
 ---
 
 ## 🚀 Quick Start
 
 ### 1. Prerequisites (All Platforms)
-- **[Ollama](https://ollama.com/):** Must be running locally for model inference.
-- **Node.js 20+:** Required for the UI and dev tools.
-- **Python 3.12+:** Required for the autonomous Agent Core.
+- **[Ollama](https://ollama.com/):** The engine for model inference. Must be running locally.
+- **Node.js 20+:** Powers the neural interface's logic.
+- **Rust:** The backbone for Tauri's high-speed native bridge.
 
-### 2. Setup (Windows)
+### 2. Setup (Linux - Mint/Ubuntu/Debian)
+Install system dependencies and the Rust toolchain:
+```bash
+sudo apt-get update
+sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+source $HOME/.cargo/env
+npm install
+```
+
+### 3. Setup (Windows)
 Run the automated PowerShell installer:
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\install-windows.ps1
 ```
 
-### 3. Setup (macOS)
+### 4. Setup (macOS)
 Run the automated shell installer:
 ```bash
 chmod +x ./install.sh
 ./install.sh
 ```
 
-### 4. Launch
-Launch the neural interface from your terminal:
+### 5. Launch
+Initialize the neural interface:
 ```bash
+# Linux & macOS
+./aether.sh
+
 # Windows
 ai
-
-# macOS
-./aether.sh
 ```
 
 ---
 
-### Aether Ecosystem
+## 🌌 Core Features
 
-<div align="center">
-
-| Platform | Repository | Version |
-|----------|------------|---------|
-| 📱 **Android (Termux)** | [aether-android](https://github.com/earnerbaymalay/aether-android) | 26.05.1 |
-| 🖥️ **Desktop (Tauri)** | [aether-tauri](https://github.com/earnerbaymalay/aether-tauri) | 26.05.1 |
-
-</div>
-
----
-
-## 🌌 Core Architecture
-
-- **🧠 The Brain:** Specialized model tiers (`HERMES` for agency, `DEEPSEEK` for logic).
-- **🛠️ The Toolbox:** Platform-native tools (PowerShell for Windows, Bash for macOS/Linux).
-- **🗄️ AetherVault:** Markdown-based persistent memory with **Neural Distillation**.
+- **🧠 Multi-Tier Brain:** Configurable model selection for different tasks (e.g., `HERMES` for agency, `DEEPSEEK` for deep logic).
+- **🛠️ Integrated Toolbox:** Execute system-level commands (PowerShell/Bash) through the AI agent.
+- **🗄️ AetherVault:** A persistent, markdown-based memory system that uses **Neural Distillation** to summarize and store long-term context.
+- **🔒 Zero-Cloud:** No telemetry, no accounts, no subscriptions. Total data sovereignty.
 
 ---
 
 ## Documentation
 
-- **[📖 Usage Guide](USAGE.md)** — Toolbox, AetherVault, and Setup.
-- **[🗺️ Roadmap](ROADMAP.md)** — Future development goals and feature tracking.
-- **[🔧 Troubleshooting](TROUBLESHOOTING.md)** — Ollama connections and script permissions.
+- **[📖 Usage Guide](USAGE.md)** — Deep dive into the Toolbox, AetherVault, and Setup.
+- **[🗺️ Roadmap](ROADMAP.md)** — What's coming next (Vision, Real-time Analysis).
+- **[🔧 Troubleshooting](TROUBLESHOOTING.md)** — Fixing connection issues and build errors.
 
 ---
 

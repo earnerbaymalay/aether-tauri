@@ -1,32 +1,71 @@
-# Aether - Tauri troubleshooting guide
+# 🔧 Aether - Tauri Troubleshooting
 
-Common issues and solutions.
-
----
-
-## Installation and build issues
-
-### Node.js or Rust not found
-Ensure Node.js (version 18+) and Rust are installed and configured correctly in your system's PATH.
-
-### Tauri build errors
-- Check the Tauri documentation for specific error messages.
-- Ensure all Rust dependencies are met.
+Having issues? Here are the most common solutions.
 
 ---
 
-## Runtime issues
+## 🏗️ Build & Installation
 
-### Ollama not connecting
-- Verify Ollama is running (`ollama serve`).
-- Confirm that the correct model is pulled (`ollama pull llama3.2`).
-- Check firewall settings if necessary.
-- Ensure the Ollama endpoint in Aether - Tauri settings is correct.
+### Linux: Missing WebKit2GTK
+**Error:** `Could not find libwebkit2gtk-4.1`
+**Fix:** Install the development headers:
+```bash
+sudo apt-get install libwebkit2gtk-4.1-dev
+```
 
-### AI models slow or unresponsive
-- Check Ollama or llama.cpp logs for errors.
-- Reduce resource usage if running other intensive applications.
-- Consider using smaller AI models.
+### Windows: PowerShell Execution Policy
+**Error:** `Script cannot be loaded because running scripts is disabled`
+**Fix:** Run the installer with a bypass flag:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install-windows.ps1
+```
+
+### macOS: App is "Damaged"
+**Fix:** This is often a Gatekeeper issue. Run:
+```bash
+xattr -d com.apple.quarantine /Applications/Aether.app
+```
+
+---
+
+## 🧠 AI & Model Issues
+
+### Ollama Not Found
+**Check:** Ensure Ollama is running in the background.
+```bash
+# Check status (Linux/macOS)
+pgrep -x ollama
+
+# Restart service (Linux)
+sudo systemctl restart ollama
+```
+
+### Model Missing
+**Error:** `Model 'llama3.2:3b' not found`
+**Fix:** Manually pull the required models:
+```bash
+ollama pull hermes3:8b
+ollama pull llama3.2:3b
+```
+
+### Inference is Slow
+- **Hardware:** Ensure you have enough RAM/VRAM. AI inference is resource-intensive.
+- **Background Tasks:** Close other GPU-heavy apps (browsers, games).
+- **Model Size:** If 8B models are too slow, try 1B or 3B versions (e.g., `llama3.2:1b`).
+
+---
+
+## 🛠️ Toolbox & Permissions
+
+### Permission Denied (Linux/macOS)
+**Error:** `sh: ./aether.sh: Permission denied`
+**Fix:** Grant execution rights:
+```bash
+chmod +x ./aether.sh
+```
+
+### Script Execution Fails
+If a tool fails to run, check the logs in `~/.aether/logs/aether.log`. Often, this is due to a missing system dependency or the script not being in the system PATH.
 
 ---
 
