@@ -74,6 +74,13 @@ ai
 
 ---
 
+## 🛡️ Nexus Shield
+
+Aether now includes a visual system optimizer and privacy manager. Access it via the "Nexus Shield" button to manage:
+- **Privacy Shield:** Block telemetry and OS-level ads.
+- **Gaming Mode:** Optimize power plans and network priority.
+- **AI Bloat Killer:** Disable integrated Copilot and Recall features.
+
 ## Documentation
 
 - **[📖 Usage Guide](USAGE.md)** — Deep dive into the Toolbox, AetherVault, and Setup.
