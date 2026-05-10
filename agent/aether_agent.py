@@ -76,8 +76,7 @@ DEFAULT_CONFIG = {
     "theme": "cyan",
     "verbosity": "NORMAL",
     "log_level": "INFO",
-    "browser_type": "chrome-canary",
-    "browser_path": "C:\\Users\\earnerbaymalay\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe"
+    "browser_type": "firefox"
 }
 
 def load_config():
@@ -180,7 +179,21 @@ def run_tool(name, args=""):
             cmd_args = [str(a) for a in parsed] if isinstance(parsed, (tuple, list)) else [str(parsed)]
         except: cmd_args = [args.strip()] if args else []
             
-        cmd = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(TOOLBOX_DIR / tool["script"])] + cmd_args
+        if os.name == 'nt':
+            cmd = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(TOOLBOX_DIR / tool["script"])] + cmd_args
+        else:
+            script_path = TOOLBOX_DIR / tool["script"]
+            if script_path.suffix == ".ps1":
+                sh_variant = script_path.with_suffix(".sh")
+                if sh_variant.exists(): script_path = sh_variant
+                else:
+                    py_variant = script_path.with_suffix(".py")
+                    if py_variant.exists(): script_path = py_variant
+            
+            if script_path.suffix == ".py":
+                cmd = [sys.executable, str(script_path)] + cmd_args
+            else:
+                cmd = ["bash", str(script_path)] + cmd_args
         res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
         return res.stdout.strip() if res.returncode == 0 else f"Error: {res.stderr.strip()}"
     except Exception as e: return str(e)
