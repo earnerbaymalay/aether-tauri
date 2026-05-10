@@ -155,3 +155,69 @@ body {
 
 .hidden { display: none !important; }
 .error { color: var(--red); }
+
+/* Nexus Panel */
+.nexus-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    background: var(--surface);
+    border: 1px solid var(--teal);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    z-index: 100;
+}
+.nexus-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+.nexus-header h2 { font-size: 14px; letter-spacing: 2px; }
+.nexus-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+.nexus-card {
+    background: var(--card);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+.nexus-card h3 { font-size: 14px; margin-bottom: 4px; }
+.nexus-card p { font-size: 11px; color: var(--text-dim); margin-bottom: 12px; }
+
+/* Switch Toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--border);
+  transition: .4s;
+  border-radius: 20px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px; width: 14px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider { background-color: var(--teal); }
+input:checked + .slider:before { transform: translateX(20px); }
+
+.nexus-footer { margin-top: 24px; font-size: 11px; color: var(--text-dim); text-align: center; }
+.btn-nexus { border-color: var(--purple); color: var(--purple); }
+.btn-nexus:hover { background: rgba(188, 140, 255, 0.1); }

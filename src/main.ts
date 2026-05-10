@@ -148,3 +148,43 @@ document.getElementById('btn-benchmark')?.addEventListener('click', async () => 
 
 // ── Init ──
 loadSystemInfo();
+
+// ── Nexus UI Logic ──
+const nexusPanel = document.getElementById('nexus-panel')!;
+document.getElementById('btn-nexus')?.addEventListener('click', () => {
+    nexusPanel.classList.remove('hidden');
+});
+document.getElementById('btn-nexus-close')?.addEventListener('click', () => {
+    nexusPanel.classList.add('hidden');
+});
+
+const nexusStatus = document.getElementById('nexus-status')!;
+
+async function runNexusOptimization(type: string, enabled: boolean) {
+    nexusStatus.textContent = `Processing: ${type}...`;
+    try {
+        // In a real app, this would call the Rust backend which calls system_optimizer.py
+        console.log(`Nexus Tweak: ${type} -> ${enabled}`);
+        setTimeout(() => {
+            nexusStatus.textContent = `Status: ${type} ${enabled ? 'Engaged' : 'Disengaged'}.`;
+        }, 1000);
+    } catch (err) {
+        nexusStatus.textContent = `Error: ${err}`;
+    }
+}
+
+document.getElementById('toggle-privacy')?.addEventListener('change', (e) => {
+    runNexusOptimization('Privacy Shield', (e.target as HTMLInputElement).checked);
+});
+
+document.getElementById('toggle-gaming')?.addEventListener('change', (e) => {
+    runNexusOptimization('Gaming Mode', (e.target as HTMLInputElement).checked);
+});
+
+document.getElementById('toggle-ai-bloat')?.addEventListener('change', (e) => {
+    runNexusOptimization('AI Bloat Killer', (e.target as HTMLInputElement).checked);
+});
+
+document.getElementById('btn-clean')?.addEventListener('click', () => {
+    runNexusOptimization('System Deep Clean', true);
+});

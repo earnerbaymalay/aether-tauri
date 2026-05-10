@@ -75,11 +75,54 @@
                 </div>
                 <div class="quick-actions">
                     <button id="btn-context7" class="btn btn-small">🧠 AetherVault</button>
+                    <button id="btn-nexus" class="btn btn-small btn-nexus">🛡️ Nexus Shield</button>
                     <button id="btn-tools" class="btn btn-small">🛠️ Tools</button>
                     <button id="btn-bench" class="btn btn-small">📏 Bench</button>
                 </div>
             </aside>
         </main>
+
+        <!-- Nexus Panel (hidden initially) -->
+        <div id="nexus-panel" class="nexus-panel hidden">
+            <div class="nexus-header">
+                <h2>NEXUS SHIELD // SYSTEM OPTIMIZER</h2>
+                <button id="btn-nexus-close" class="btn btn-small">✕</button>
+            </div>
+            <div class="nexus-grid">
+                <div class="nexus-card">
+                    <h3>Privacy Shield</h3>
+                    <p>Blocks Telemetry, Ads, & Cortana</p>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-privacy" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="nexus-card">
+                    <h3>Gaming Mode</h3>
+                    <p>Ultimate Power & Network Boost</p>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-gaming">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="nexus-card">
+                    <h3>System Clean</h3>
+                    <p>Wipe cache and temp files</p>
+                    <button id="btn-clean" class="btn btn-small">Run Deep Clean</button>
+                </div>
+                <div class="nexus-card">
+                    <h3>AI Bloat Killer</h3>
+                    <p>Disable Copilot & Recall</p>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-ai-bloat" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="nexus-footer">
+                <p id="nexus-status">Status: All shields nominal.</p>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="/src/main.ts"></script>
