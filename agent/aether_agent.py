@@ -70,7 +70,9 @@ DEFAULT_CONFIG = {
     "logic_model": "deepseek-r1:8b",
     "theme": "cyan",
     "verbosity": "NORMAL",
-    "log_level": "INFO"
+    "log_level": "INFO",
+    "browser_type": "chrome-canary",
+    "browser_path": "C:\\Users\\earnerbaymalay\\AppData\\Local\\Google\\Chrome SxS\\Application\\chrome.exe"
 }
 
 def load_config():
@@ -204,9 +206,44 @@ def get_neural_plan(query, context=""):
 
 def handle_settings(ui):
     ui.mode = "SETTINGS"
-    # Simple settings toggle logic
-    console.print(Panel("Settings UI is currently being refined. Use /config for raw edits.", title="Settings"))
-    time.sleep(2)
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        console.print(ui.render_header())
+        table = Table(title="[bold yellow]System Configuration[/bold yellow]", border_style="yellow")
+        table.add_column("Key", style="cyan"); table.add_column("Value", style="magenta"); table.add_column("Description", style="dim")
+        table.add_row("1. Uncensored", str(CONFIG["uncensored"]), "Toggle safety filters")
+        table.add_row("2. RAG", str(CONFIG["rag_enabled"]), "Use AetherVault context")
+        table.add_row("3. Threads", str(CONFIG["threads"]), "CPU threads for inference")
+        table.add_row("4. Browser", CONFIG["browser_type"], "Active web browser")
+        table.add_row("5. Browser Path", CONFIG["browser_path"], "Path to browser executable")
+        table.add_row("6. Theme", CONFIG["theme"], "Primary UI color palette")
+        table.add_row("7. Log Level", CONFIG["log_level"], "Granularity of logs")
+        
+        console.print(table)
+        console.print("\n[dim]Type a number to edit or 'back'.[/dim]")
+        choice = console.input(f"[bold yellow]Settings » [/]").strip().lower()
+        
+        if choice == 'back': ui.mode = "NEURAL_LINK"; break
+
+        if choice == '1': CONFIG["uncensored"] = not CONFIG["uncensored"]
+        elif choice == '2': CONFIG["rag_enabled"] = not CONFIG["rag_enabled"]
+        elif choice == '3':
+            val = console.input("[bold white]New Thread Count » [/]")
+            if val.isdigit(): CONFIG["threads"] = int(val)
+        elif choice == '4':
+            val = console.input("[bold white]New Browser Type (chrome/canary/edge/firefox) » [/]").lower()
+            if val: CONFIG["browser_type"] = val
+        elif choice == '5':
+            val = console.input("[bold white]Enter Full Path to Browser Executable » [/]")
+            if val: CONFIG["browser_path"] = val
+        elif choice == '6':
+            val = console.input("[bold white]New Theme » [/]").lower()
+            if val in ["cyan", "magenta", "green", "yellow", "blue"]: CONFIG["theme"] = val
+        elif choice == '7':
+            val = console.input("[bold white]New Log Level » [/]").upper()
+            if val in ["DEBUG", "INFO", "WARNING", "ERROR"]: CONFIG["log_level"] = val
+                
+        save_config(CONFIG)
 
 def handle_memory(ui):
     ui.mode = "VAULT"

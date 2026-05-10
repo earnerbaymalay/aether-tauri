@@ -42,13 +42,38 @@ Write-Host "[OK] Dependencies satisfied." -ForegroundColor Green
 # 4. Configure Local Paths
 Write-Step "Configuring workspace..."
 $aetherPath = "$HOME\aether"
+$configPath = "$HOME\.aether"
 if (-not (Test-Path $aetherPath)) {
     New-Item -ItemType Directory -Path $aetherPath -Force | Out-Null
     New-Item -ItemType Directory -Path "$aetherPath\knowledge\aethervault" -Force | Out-Null
-    Write-Host "[OK] Created local Aether directory at $aetherPath" -ForegroundColor Green
+}
+if (-not (Test-Path $configPath)) {
+    New-Item -ItemType Directory -Path $configPath -Force | Out-Null
 }
 
-# 5. Create 'ai' Alias
+# 5. Web Search Configuration
+Write-Step "Configuring Neural Web Search..."
+$canaryPath = "$env:LOCALAPPDATA\Google\Chrome SxS\Application\chrome.exe"
+$defaultPath = $canaryPath
+if (-not (Test-Path $canaryPath)) {
+    $defaultPath = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+}
+
+Write-Host "Recommended browser: Chrome Canary (for advanced scraping/agentic use)." -ForegroundColor Gray
+$browserType = Read-Host "Enter preferred browser (chrome-canary/chrome/edge) [Default: chrome-canary]"
+if (-not $browserType) { $browserType = "chrome-canary" }
+
+$finalPath = Read-Host "Enter full path to browser executable [Default: $defaultPath]"
+if (-not $finalPath) { $finalPath = $defaultPath }
+
+$config = @{
+    "browser_type" = $browserType
+    "browser_path" = $finalPath
+}
+$config | ConvertTo-Json | Out-File -FilePath "$configPath\config.json" -Encoding UTF8
+Write-Host "[OK] Web search configured." -ForegroundColor Green
+
+# 6. Create 'ai' Alias
 Write-Step "Creating global 'ai' command..."
 $binDir = "$HOME\.local\bin"
 if (-not (Test-Path $binDir)) { New-Item -ItemType Directory -Path $binDir -Force | Out-Null }
