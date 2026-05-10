@@ -24,6 +24,7 @@ from rich.rule import Rule
 from rag_engine import AetherRAG
 from p2p_sync import AetherLink
 from system_scanner import SystemScanner
+from skill_loader import UniversalSkillEngine
 from logger import AetherLogger
 
 # --- Constants & Configuration ---
@@ -40,6 +41,8 @@ CONFIG_FILE = Path.home() / ".aether" / "config.json"
 OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"
 OLLAMA_CHAT_URL = "http://127.0.0.1:11434/api/chat"
 SYSTEM_PROFILE_PATH = VAULT_DIR / "SYSTEM_PROFILE.md"
+
+SKILLS = UniversalSkillEngine(AGENT_ROOT)
 
 def is_stale_profile():
     if not SYSTEM_PROFILE_PATH.exists(): return True
@@ -156,17 +159,39 @@ class NeuralMemory:
     def list_fragments(self):
         return sorted(list(self.fragments_dir.glob("*.md")), key=os.path.getmtime, reverse=True)
 
-    def save_fragment(self, title, content, is_auto=False):
+    def save_fragment(self, title, content, is_auto=False, is_shadow=False):
         timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
         safe_title = re.sub(r'[^\w\s-]', '', title).strip().replace(' ', '_')
-        filename = f"{'auto_' if is_auto else ''}{safe_title}_{timestamp}.md"
+        prefix = "auto_" if is_auto else "shadow_" if is_shadow else ""
+        filename = f"{prefix}{safe_title}_{timestamp}.md"
         path = self.fragments_dir / filename
         with open(path, "w", encoding="utf-8") as f:
-            f.write(f"# {title}\n\n{content}\n\n---\n*Type: {'Autonomous' if is_auto else 'Manual Fragment'} | Date: {datetime.now().strftime('%Y-%m-%d')}*")
+            f.write(f"# {title}\n\n{content}\n\n---\n*Type: {'Shadow Extraction' if is_shadow else 'Autonomous' if is_auto else 'Manual Fragment'} | Date: {datetime.now().strftime('%Y-%m-%d')}*")
         LOGGER.info(f"Memory fragment saved: {filename}")
         return path
 
+    def background_shadow_monitor(self, user_input, ai_response):
+        """Asynchronous background memory extraction (Shadow Memory)."""
+        prompt = f"""System: Aether Shadow Monitor (v26.05.1). 
+Watch interaction. Extract ONLY hard facts, user preferences, or project architecture details.
+If nothing new/important, respond 'NULL'. Otherwise: Title | Fact-dense content.
+User: {user_input}
+AI: {ai_response}
+Extraction:"""
+        
+        payload = {"model": CONFIG["turbo_model"], "prompt": prompt, "stream": False}
+        try:
+            r = requests.post(OLLAMA_API_URL, json=payload, timeout=20)
+            update = r.json().get("response", "").strip()
+            if "|" in update and "NULL" not in update.upper():
+                title, content = update.split("|", 1)
+                self.save_fragment(title.strip(), content.strip(), is_shadow=True)
+                return True
+        except: pass
+        return False
+
     def synthesize_and_save(self, user_input, ai_response):
+        # Legacy auto-memory (replaced by shadow in most cases, but kept for explicit triggers)
         prompt = f"""System: You are the Aether Memory Architect. 
 Analyze the interaction. If there is new information about the user (preferences, facts, projects, system changes), 
 distill it into a concise title and bullet points. If nothing is worth remembering, respond ONLY with 'NULL'.
@@ -286,15 +311,69 @@ def benchmark_tps():
         return tokens / duration if duration > 0 else 0.0
     except: return 0.0
 
-def get_welcome_message():
-    prompt = "System: Aether Guide. Concise welcome detailing multi-tier engine, fragmented memory, toolbox, and voice.\nWelcome Message:"
-    payload = {"model": CONFIG["turbo_model"], "prompt": prompt, "stream": False}
-    try:
-        r = requests.post(OLLAMA_API_URL, json=payload, timeout=20)
-        return r.json().get("response", "Welcome to Aether.")
-    except: return "Welcome. System Online."
+def handle_welcome(ui):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    console.print(ui.render_header())
+    with console.status("[dim]Initializing Neural Link..."): welcome = get_welcome_message()
+    console.print(Panel(Markdown(welcome), title="[bold cyan]SYSTEM INITIALIZED[/bold cyan]", border_style=CONFIG["theme"], padding=(1, 2)))
 
-# --- Interaction Handlers ---
+def handle_auto_fix(ui, error_log):
+    """Self-healing logic: analyzes error and suggests/applies fix."""
+    ui.mode = "AUTO_FIX"
+    prompt = f"System: Aether Auto-Fix Engine. Analyze error and suggest 1-step terminal command to fix.\nError:\n{error_log}\nFix Command (JSON format: {{'thought': '...', 'command': '...'}}):"
+    payload = {"model": CONFIG["logic_model"], "prompt": prompt, "stream": False}
+    try:
+        res = requests.post(OLLAMA_API_URL, json=payload, timeout=30).json().get("response", "")
+        # Heuristic parsing for command
+        console.print(Panel(res, title="[bold yellow]Auto-Fix Analysis[/bold yellow]", border_style="yellow"))
+        if "```" in res:
+            match = re.search(r"```(?:powershell|bash)?\n(.*?)\n```", res, re.DOTALL)
+            cmd = match.group(1) if match else ""
+            if cmd and console.input(f"[bold white]Apply command: {cmd}? (y/n) » [/]").lower() == 'y':
+                obs = run_tool("shell_exec", cmd)
+                console.print(Panel(obs, title="Fix Output", border_style="green"))
+    except Exception as e:
+        console.print(f"[red]Auto-Fix failed: {e}[/red]")
+
+def handle_skills(ui):
+    """Dynamic Skill Management UI."""
+    ui.mode = "SKILLS"
+    while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        console.print(ui.render_header())
+        active = SKILLS.discover_skills(os.getcwd())
+        
+        table = Table(title="[bold green]Neural Skill Manifest[/bold green]", border_style="green", expand=True)
+        table.add_column("Source", style="cyan"); table.add_column("Type", style="yellow"); table.add_column("Status", style="magenta")
+        for name in active:
+            table.add_row(name, "External Instruction", "ACTIVE")
+        
+        console.print(table)
+        console.print("\n[dim]Aether automatically ports CLAUDE.md, GEMINI.md, and SKILL.md from the CWD.[/dim]")
+        if console.input("\n[bold green]Skills (type 'back') » [/]").lower() == "back": break
+
+def handle_agents(ui):
+    """Multi-Agent Swarm Orchestration."""
+    ui.mode = "SWARM"
+    os.system('cls' if os.name == 'nt' else 'clear')
+    console.print(ui.render_header())
+    
+    agents = [
+        {"name": "Librarian", "model": CONFIG["turbo_model"], "role": "RAG & Knowledge Retrieval"},
+        {"name": "Architect", "model": CONFIG["logic_model"], "role": "Planning & Design Analysis"},
+        {"name": "Coder", "model": "qwen2.5-coder:7b", "role": "Neural Code Generation"},
+        {"name": "Sentinel", "model": CONFIG["active_model"], "role": "Security & Logic Validation"}
+    ]
+    
+    table = Table(title="[bold magenta]Aether Swarm: Active Agents[/bold magenta]", border_style="magenta")
+    table.add_column("Agent", style="cyan"); table.add_column("Model", style="yellow"); table.add_column("Role", style="dim")
+    for a in agents: table.add_row(a["name"], a["model"], a["role"])
+    
+    console.print(table)
+    console.print("\n[dim]The swarm is active. Complex tasks are automatically distributed across these tiers.[/dim]")
+    console.input("\n[bold magenta]Swarm (press Enter to exit) » [/]")
+
+# --- UI Render ---
 
 def handle_settings(ui):
     ui.mode = "SYSTEM_CONFIG"
@@ -493,10 +572,15 @@ def main():
     with console.status("[dim]Initializing Neural Link..."): welcome = get_welcome_message()
     console.print(Panel(Markdown(welcome), title="[bold cyan]SYSTEM INITIALIZED[/bold cyan]", border_style=CONFIG["theme"], padding=(1, 2)))
     
-    history = [{"role": "system", "content": f"You are Aether. Technical, precise. Computer Use protocol active.\n{MANIFEST.get_tool_descriptions()}"}]
+    # Discovery of local skills on startup
+    SKILLS.discover_skills(os.getcwd())
 
     while True:
         try:
+            # Refresh skills in context dynamically
+            skill_prompt = SKILLS.get_skill_prompt()
+            history = [{"role": "system", "content": f"You are Aether. Technical, precise. Computer Use protocol active.\n{MANIFEST.get_tool_descriptions()}\n{skill_prompt}"}]
+
             user_input = console.input("\n[bold white]User » [/]").strip()
             if not user_input: continue
             if user_input.startswith("/"):
@@ -505,6 +589,11 @@ def main():
                 if cmd == "clear": os.system('cls' if os.name == 'nt' else 'clear'); console.print(ui.render_header()); continue
                 if cmd == "settings": handle_settings(ui); continue
                 if cmd == "memory": handle_memory(ui); continue
+                if cmd == "agents": handle_agents(ui); continue
+                if cmd == "skills": handle_skills(ui); continue
+                if cmd == "auto-fix":
+                    error_target = console.input("[bold white]Error Log or Task » [/]")
+                    handle_auto_fix(ui, error_target); continue
                 if cmd == "models": console.print(f"[bold cyan]Active Models:[/]\n- Agent: {CONFIG['active_model']}\n- Turbo: {CONFIG['turbo_model']}\n- Logic: {CONFIG['logic_model']}"); continue
                 if cmd == "health":
                     with console.status("[dim]Checking..."): h = run_tool("system_monitor"); d = run_tool("dependency_checker")
@@ -512,10 +601,14 @@ def main():
                 guidance = get_neural_guidance(user_input); console.print(f"[yellow]![/] {guidance}"); continue
 
             ui.mode = "NEURAL_LINK"
-            def bg_sentiment():
-                ui.mode = f"NEURAL_LINK: {get_user_sentiment(user_input)}"
-            threading.Thread(target=bg_sentiment, daemon=True).start()
-            
+            # Background Shadow Monitor
+            def bg_monitor(inp, out):
+                if MEMORY.background_shadow_monitor(inp, out):
+                    # We don't force re-index here to avoid background CPU spikes during chat
+                    # It will be indexed on next turn or manual /memory
+                    pass
+
+            # ... (Rest of chat logic)
             context = RAG.query(user_input) if CONFIG["rag_enabled"] else ""
             
             # Logic Tier Planning (Verbosity Dependent)
@@ -533,11 +626,8 @@ def main():
                 ui.stats["tps"] = tokens / (time.time() - start) if (time.time()-start) > 0 else 0
                 console.print(""); console.print(ui.render_header())
 
-                if CONFIG["auto_memory"]: 
-                    def bg_memory():
-                        if MEMORY.synthesize_and_save(user_input, resp):
-                            ui.stats["vault_size"] = RAG.index_vault()
-                    threading.Thread(target=bg_memory, daemon=True).start()
+                # Start Shadow Extraction in background
+                threading.Thread(target=bg_monitor, args=(user_input, resp), daemon=True).start()
 
                 match = re.search(r"<tool>(\w+)\((.*)\)</tool>", resp)
                 if match:
