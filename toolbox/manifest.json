@@ -21,6 +21,9 @@
     {"name": "write_file", "description": "Write or create a file with content", "script": "write_file.ps1", "enabled": true},
     {"name": "shell_exec", "description": "Execute a shell command", "script": "shell_exec.ps1", "enabled": true},
     {"name": "get_sys_info", "description": "Get detailed system information", "script": "get_sys_info.ps1", "enabled": true},
-    {"name": "voice_ops", "description": "Voice operations (speak text or transcribe audio file)", "script": "voice_ops.ps1", "enabled": true}
+    {"name": "voice_ops", "description": "Voice operations (speak text or transcribe audio file)", "script": "voice_ops.ps1", "enabled": true},
+    {"name": "edit_file", "description": "Surgical replacement of text in a file (args: path, old_text, new_text)", "script": "edit_file.ps1", "enabled": true},
+    {"name": "grep_search", "description": "Search for pattern in files (args: pattern, path, include_glob)", "script": "grep_search.ps1", "enabled": true},
+    {"name": "glob_files", "description": "List files matching a glob pattern (args: pattern, path)", "script": "glob_files.ps1", "enabled": true}
   ]
 }
