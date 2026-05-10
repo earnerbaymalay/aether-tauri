@@ -14,26 +14,48 @@ class SystemScanner:
         self.findings["platform_release"] = platform.release()
         self.findings["cpu"] = platform.processor()
         
-        # 1. Dev Tools Check
+        # 1. User Identity Discovery
+        self.findings["user"] = self._discover_user_info()
+        
+        # 2. Dev Tools Check
         self.findings["tools"] = self._check_tools()
         
-        # 2. Project Discovery (Scan home directory for common project markers)
+        # 3. Project Discovery
         self.findings["projects"] = self._discover_projects()
         
-        # 3. Environment Variables (Relevant ones)
+        # 4. Environment Highlights
         self.findings["env_highlights"] = {
             k: v for k, v in os.environ.items() 
-            if any(x in k.lower() for x in ["path", "user", "appdata", "editor", "shell"])
+            if any(x in k.lower() for x in ["path", "user", "appdata", "editor", "shell", "git", "ollama"])
         }
         
         return self.findings
 
+    def _discover_user_info(self):
+        """Attempts to find user identity via git and OS."""
+        user = {
+            "name": os.getlogin() if hasattr(os, "getlogin") else os.environ.get("USERNAME"),
+            "git_name": "Unknown",
+            "git_email": "Unknown"
+        }
+        try:
+            name = subprocess.run(["git", "config", "user.name"], capture_output=True, text=True, timeout=2)
+            if name.returncode == 0: user["git_name"] = name.stdout.strip()
+            email = subprocess.run(["git", "config", "user.email"], capture_output=True, text=True, timeout=2)
+            if email.returncode == 0: user["git_email"] = email.stdout.strip()
+        except:
+            pass
+        return user
+
     def _check_tools(self):
         tools = {}
-        check_list = ["node", "npm", "python", "git", "gh", "docker", "ollama", "ffmpeg", "go", "rustc"]
+        check_list = ["node", "npm", "python", "git", "gh", "docker", "ollama", "ffmpeg", "rustc", "cargo", "tauri"]
         for tool in check_list:
             try:
-                result = subprocess.run([tool, "--version"], capture_output=True, text=True, timeout=2)
+                # Some tools use --version, some just version
+                cmd = [tool, "--version"]
+                if tool == "tauri": cmd = ["cargo", "tauri", "--version"]
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=2)
                 if result.returncode == 0:
                     tools[tool] = result.stdout.strip().split("\n")[0]
             except:
@@ -44,20 +66,18 @@ class SystemScanner:
         """Heuristic search for user project directories."""
         projects = []
         home = Path.home()
-        # Common places to look
-        search_roots = [home, home / "Documents", home / "Desktop"]
+        search_roots = [home, home / "Documents", home / "Desktop", home / "source" / "repos"]
         
         seen_dirs = set()
         for root in search_roots:
             if not root.exists(): continue
             try:
-                # Look for .git or package.json as project markers
                 for p in root.iterdir():
                     if p.is_dir() and not p.name.startswith("."):
-                        if (p / ".git").exists() or (p / "package.json").exists() or (p / "requirements.txt").exists():
+                        if (p / ".git").exists() or (p / "package.json").exists() or (p / "requirements.txt").exists() or (p / "Cargo.toml").exists():
                             projects.append({"name": p.name, "path": str(p)})
                             seen_dirs.add(p)
-                    if len(projects) > 15: break # Limit discovery
+                    if len(projects) > 20: break
             except:
                 continue
         return projects
@@ -66,6 +86,11 @@ class SystemScanner:
         """Converts findings into a raw technical Markdown report."""
         scan_data = self.scan()
         report = "# RAW SYSTEM SCAN REPORT\n\n"
+        
+        report += "## User Identity\n"
+        report += f"- **System User:** {scan_data['user']['name']}\n"
+        report += f"- **Git Name:** {scan_data['user']['git_name']}\n"
+        report += f"- **Git Email:** {scan_data['user']['git_email']}\n\n"
         
         report += "## System Specs\n"
         report += f"- **OS:** {scan_data['platform']} {scan_data['platform_release']}\n"

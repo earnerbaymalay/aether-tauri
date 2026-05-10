@@ -27,9 +27,10 @@ from system_scanner import SystemScanner
 from logger import AetherLogger
 
 # --- Constants & Configuration ---
+AGENT_ROOT = Path(__file__).parent.parent
 DIR = Path.home() / "aether"
 MODELS_DIR = DIR / "models"
-TOOLBOX_DIR = DIR / "toolbox"
+TOOLBOX_DIR = AGENT_ROOT / "toolbox"
 KNOWLEDGE_DIR = DIR / "knowledge"
 VAULT_DIR = KNOWLEDGE_DIR / "aethervault"
 FRAGMENTS_DIR = VAULT_DIR / "fragments"
@@ -39,6 +40,15 @@ CONFIG_FILE = Path.home() / ".aether" / "config.json"
 OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"
 OLLAMA_CHAT_URL = "http://127.0.0.1:11434/api/chat"
 SYSTEM_PROFILE_PATH = VAULT_DIR / "SYSTEM_PROFILE.md"
+
+def is_stale_profile():
+    if not SYSTEM_PROFILE_PATH.exists(): return True
+    content = SYSTEM_PROFILE_PATH.read_text(encoding="utf-8")
+    # Detect legacy platform names
+    if "aether-desktop" in content or "aether-apple" in content: return True
+    # Check if user identity is missing (new feature)
+    if "User Identity" not in content: return True
+    return False
 
 FRAGMENTS_DIR.mkdir(parents=True, exist_ok=True)
 LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -466,15 +476,17 @@ def main():
     LINK.start_server(); ui.stats["p2p_port"] = LINK.port
     with console.status("[bold green]Syncing AetherVault..."): ui.stats["vault_size"] = RAG.index_vault()
 
-    if not SYSTEM_PROFILE_PATH.exists():
-        console.print(Panel("[bold yellow]NEURAL ONBOARDING REQUIRED[/bold yellow]\n\nAether has no profile. Grant permission for a **Neural System Scan**?\n- Dev tools\n- Project paths\n- Hardware specs\n\nStaying **100% local**.", border_style="yellow"))
+    if is_stale_profile():
+        title = "NEURAL ONBOARDING REQUIRED" if not SYSTEM_PROFILE_PATH.exists() else "NEURAL REFRESH RECOMMENDED"
+        msg = "Aether has no profile." if not SYSTEM_PROFILE_PATH.exists() else "Your system profile is stale (v26.04 legacy detected)."
+        console.print(Panel(f"[bold yellow]{title}[/bold yellow]\n\n{msg}\nGrant permission for a **Neural System Scan**?\n- User identity\n- Dev tools\n- Project paths\n- Hardware specs\n\nStaying **100% local**.", border_style="yellow"))
         if console.input("[bold white]Allow Scan? (y/n) » [/]").strip().lower() == 'y':
-            with console.status("[bold cyan]Scanning..."): raw = scanner.generate_report()
-            with console.status("[bold magenta]Synthesizing..."): prof = generate_system_profile(raw)
+            with console.status("[bold cyan]Scanning System..."): raw = scanner.generate_report()
+            with console.status("[bold magenta]Analyzing User..."): prof = generate_system_profile(raw)
             with console.status("[bold blue]Benchmarking..."): ui.stats["tps"] = benchmark_tps()
             SYSTEM_PROFILE_PATH.write_text(f"# SYSTEM_PROFILE.md\n\n{prof}\n\n{raw}", encoding="utf-8")
             ui.stats["vault_size"] = RAG.index_vault()
-            console.print(Panel(prof, title="[bold green]Profile Synchronized[/bold green]", border_style="green")); time.sleep(2)
+            console.print(Panel(prof, title="[bold green]Neural Profile Synchronized[/bold green]", border_style="green")); time.sleep(2)
 
     os.system('cls' if os.name == 'nt' else 'clear')
     console.print(ui.render_header())
