@@ -24,6 +24,9 @@
     {"name": "voice_ops", "description": "Voice operations (speak text or transcribe audio file)", "script": "voice_ops.ps1", "enabled": true},
     {"name": "edit_file", "description": "Surgical replacement of text in a file (args: path, old_text, new_text)", "script": "edit_file.ps1", "enabled": true},
     {"name": "grep_search", "description": "Search for pattern in files (args: pattern, path, include_glob)", "script": "grep_search.ps1", "enabled": true},
-    {"name": "glob_files", "description": "List files matching a glob pattern (args: pattern, path)", "script": "glob_files.ps1", "enabled": true}
+    {"name": "glob_files", "description": "List files matching a glob pattern (args: pattern, path)", "script": "glob_files.ps1", "enabled": true},
+    {"name": "system_optimizer", "description": "OS-agnostic system optimization and deep cleanup (Nexus11 logic)", "script": "system_optimizer.py", "enabled": true},
+    {"name": "net_scan", "description": "Security: Port scanner for target IP/Host (args: target, start_port, end_port)", "script": "net_scan.ps1", "enabled": true},
+    {"name": "net_recon", "description": "Security: Network reconnaissance and DNS lookup (args: target)", "script": "net_recon.ps1", "enabled": true}
   ]
 }
