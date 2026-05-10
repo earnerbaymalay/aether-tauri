@@ -56,7 +56,12 @@ HINTS = [
     "AetherLink is listening for P2P sync on port 8888.",
     "Manage your knowledge via '/memory'.",
     "Aether supports multi-step tool loops (ReAct).",
-    "Try dropping a CLAUDE.md file to import skills."
+    "Try dropping a CLAUDE.md file to import skills.",
+    "Use '/health' to check system vitals and dependencies.",
+    "Need to fix a terminal error? Use '/auto-fix'.",
+    "Type '/help' to see all available slash commands.",
+    "The Shadow Monitor autonomously extracts facts in the background.",
+    "Specialized Coder model is active for '/auto-fix' tasks."
 ]
 
 # --- State & Persistence ---
@@ -204,45 +209,46 @@ def get_neural_plan(query, context=""):
 
 # --- Interaction Handlers ---
 
+def handle_help(ui):
+    ui.mode = "HELP"
+    os.system('cls' if os.name == 'nt' else 'clear')
+    console.print(ui.render_header())
+    table = Table(title="Aether Command Reference", border_style="cyan", expand=True)
+    table.add_column("Command", style="yellow"); table.add_column("Description")
+    table.add_row("/help", "Display this reference guide")
+    table.add_row("/settings", "Configure models, threads, and browser")
+    table.add_row("/memory", "Manage AetherVault memory fragments")
+    table.add_row("/auto-fix", "Self-healing error analysis")
+    table.add_row("/health", "Check system vitals and dependencies")
+    table.add_row("/clear", "Reset interface view")
+    table.add_row("/exit", "Terminate session")
+    console.print(table)
+    console.input("\nPress Enter to return...")
+
 def handle_settings(ui):
     ui.mode = "SETTINGS"
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
         console.print(ui.render_header())
-        table = Table(title="[bold yellow]System Configuration[/bold yellow]", border_style="yellow")
-        table.add_column("Key", style="cyan"); table.add_column("Value", style="magenta"); table.add_column("Description", style="dim")
-        table.add_row("1. Uncensored", str(CONFIG["uncensored"]), "Toggle safety filters")
-        table.add_row("2. RAG", str(CONFIG["rag_enabled"]), "Use AetherVault context")
-        table.add_row("3. Threads", str(CONFIG["threads"]), "CPU threads for inference")
-        table.add_row("4. Browser", CONFIG["browser_type"], "Active web browser")
-        table.add_row("5. Browser Path", CONFIG["browser_path"], "Path to browser executable")
-        table.add_row("6. Theme", CONFIG["theme"], "Primary UI color palette")
-        table.add_row("7. Log Level", CONFIG["log_level"], "Granularity of logs")
-        
+        table = Table(title="System Configuration", border_style="yellow")
+        table.add_column("Key", style="cyan"); table.add_column("Value", style="magenta")
+        table.add_row("1. Uncensored", str(CONFIG["uncensored"]))
+        table.add_row("2. RAG", str(CONFIG["rag_enabled"]))
+        table.add_row("3. Threads", str(CONFIG["threads"]))
+        table.add_row("4. Browser", CONFIG["browser_type"])
+        table.add_row("5. Browser Path", CONFIG["browser_path"])
+        table.add_row("6. Theme", CONFIG["theme"])
+        table.add_row("7. Log Level", CONFIG["log_level"])
         console.print(table)
-        console.print("\n[dim]Type a number to edit or 'back'.[/dim]")
-        choice = console.input(f"[bold yellow]Settings » [/]").strip().lower()
-        
-        if choice == 'back': ui.mode = "NEURAL_LINK"; break
-
+        choice = console.input("\nEdit # or 'back' » ").strip()
+        if choice == 'back': break
         if choice == '1': CONFIG["uncensored"] = not CONFIG["uncensored"]
         elif choice == '2': CONFIG["rag_enabled"] = not CONFIG["rag_enabled"]
-        elif choice == '3':
-            val = console.input("[bold white]New Thread Count » [/]")
-            if val.isdigit(): CONFIG["threads"] = int(val)
-        elif choice == '4':
-            val = console.input("[bold white]New Browser Type (chrome/canary/edge/firefox) » [/]").lower()
-            if val: CONFIG["browser_type"] = val
-        elif choice == '5':
-            val = console.input("[bold white]Enter Full Path to Browser Executable » [/]")
-            if val: CONFIG["browser_path"] = val
-        elif choice == '6':
-            val = console.input("[bold white]New Theme » [/]").lower()
-            if val in ["cyan", "magenta", "green", "yellow", "blue"]: CONFIG["theme"] = val
-        elif choice == '7':
-            val = console.input("[bold white]New Log Level » [/]").upper()
-            if val in ["DEBUG", "INFO", "WARNING", "ERROR"]: CONFIG["log_level"] = val
-                
+        elif choice == '3': CONFIG["threads"] = int(console.input("Threads » "))
+        elif choice == '4': CONFIG["browser_type"] = console.input("Browser » ")
+        elif choice == '5': CONFIG["browser_path"] = console.input("Path » ")
+        elif choice == '6': CONFIG["theme"] = console.input("Theme » ")
+        elif choice == '7': CONFIG["log_level"] = console.input("Log Level » ")
         save_config(CONFIG)
 
 def handle_memory(ui):
@@ -270,25 +276,37 @@ class AetherUI:
     def __init__(self):
         self.stats = {"tps": 0.0, "p2p_port": 8888, "vault_size": 0}
         self.mode = "NEURAL_LINK"
+        self.hint = random.choice(HINTS)
         
+    def rotate_hint(self):
+        self.hint = random.choice(HINTS)
+
     def render_header(self):
         hw = HardwareMonitor.get_stats()
         grid = Table.grid(expand=True)
         grid.add_column(); grid.add_column(); grid.add_column()
         grid.add_row(f"[bold {CONFIG['theme']}]🌌 AETHER[/] [dim]v26.05.1[/]", f"[bold]● {self.mode}[/]", f"[dim]CPU: {hw['cpu']}% | RAM: {hw['ram']}% | Vault: {self.stats['vault_size']}[/]")
-        return Panel(grid, title=f"Model: {CONFIG['active_model']} | TPS: {self.stats['tps']:.1f}", border_style=CONFIG["theme"])
+        menu = "[dim]Commands: [bold]/settings /memory /health /auto-fix /help[/][/dim]"
+        return Panel(grid, title=f"Model: {CONFIG['active_model']} | TPS: {self.stats['tps']:.1f}", subtitle=menu, border_style=CONFIG["theme"])
+
+    def render_footer(self):
+        return Text(f"💡 {self.hint}", justify="center", style="italic dim")
 
 def chat_loop(ui, history):
     while True:
         try:
+            ui.rotate_hint()
+            console.print(ui.render_footer())
             user_input = console.input("\n[bold white]User » [/]").strip()
             if not user_input: continue
             if user_input.startswith("/"):
-                cmd = user_input[1:]
+                cmd = user_input[1:].lower()
                 if cmd == "exit": break
+                if cmd == "help": handle_help(ui); continue
                 if cmd == "settings": handle_settings(ui); continue
                 if cmd == "memory": handle_memory(ui); continue
                 if cmd == "auto-fix": handle_auto_fix(ui, console.input("Error » ")); continue
+                if cmd == "clear": os.system('cls' if os.name == 'nt' else 'clear'); console.print(ui.render_header()); continue
                 continue
 
             ui.mode = "NEURAL_LINK"
