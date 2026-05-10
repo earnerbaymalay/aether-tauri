@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri';
+import { listen } from '@tauri-apps/api/event';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
@@ -83,32 +84,33 @@ async function selectTier(tier: string) {
     // Boot message
     term.writeln('\x1b[1;34m  ╔══════════════════════════════════════════╗\x1b[0m');
     term.writeln('\x1b[1;34m  ║       🌌  A E T H E R  🌌              ║\x1b[0m');
-    term.writeln('\x1b[1;34m  ║   DESKTOP EDITION // ' + labels[tier].padEnd(16) + '║\x1b[0m');
+    term.writeln('\x1b[1;34m  ║   TAURI EDITION // ' + labels[tier].padEnd(18) + '║\x1b[0m');
     term.writeln('\x1b[1;34m  ╚══════════════════════════════════════════╝\x1b[0m');
     term.writeln('');
 
-    // Check for model
-    const home = await invoke<string>('path_home_dir');
-    const modelPath = `${home}/aether/models/${models[tier]}`;
+    // Start Agent Process
+    try {
+        await invoke('start_agent');
+        
+        listen('agent-stdout', (event) => {
+            const output = event.payload as string;
+            term.write(output.replace(/\n/g, '\r\n'));
+        });
+        
+        listen('agent-stderr', (event) => {
+            const output = event.payload as string;
+            term.write('\x1b[31m' + output.replace(/\n/g, '\r\n') + '\x1b[0m');
+        });
+    } catch (err) {
+        term.writeln(`\x1b[1;31m[!] Failed to start agent: ${err}\x1b[0m`);
+        return;
+    }
 
-    // Try to run llama-cli (in real implementation, use Tauri shell API)
-    term.writeln('\x1b[1;32m[●]\x1b[0m Loading model: ' + models[tier]);
-    term.writeln('\x1b[1;32m[●]\x1b[0m Threads: ' + navigator.hardwareConcurrency);
-    term.writeln('');
-
-    if (!currentTier) return;
-    term.write('\x1b[1;34mYou:\x1b[0m ');
-
-    // Handle user input
     let input = '';
     term.onKey(({ key, domEvent }) => {
         if (domEvent.key === 'Enter') {
-            term.writeln('');
-            if (input.trim()) {
-                term.writeln(`\x1b[1;35mAI:\x1b[0m [Processing: "${input}"]`);
-                term.writeln('');
-                term.write('\x1b[1;34mYou:\x1b[0m ');
-            }
+            term.write('\r\n');
+            invoke('send_to_agent', { input: input });
             input = '';
         } else if (domEvent.key === 'Backspace') {
             if (input.length > 0) {
@@ -163,11 +165,8 @@ const nexusStatus = document.getElementById('nexus-status')!;
 async function runNexusOptimization(type: string, enabled: boolean) {
     nexusStatus.textContent = `Processing: ${type}...`;
     try {
-        // In a real app, this would call the Rust backend which calls system_optimizer.py
-        console.log(`Nexus Tweak: ${type} -> ${enabled}`);
-        setTimeout(() => {
-            nexusStatus.textContent = `Status: ${type} ${enabled ? 'Engaged' : 'Disengaged'}.`;
-        }, 1000);
+        const result = await invoke<string>('run_nexus_optimization', { optType: type, enabled: enabled });
+        nexusStatus.textContent = `Status: ${result}`;
     } catch (err) {
         nexusStatus.textContent = `Error: ${err}`;
     }

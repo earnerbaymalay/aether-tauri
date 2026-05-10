@@ -34,7 +34,7 @@
       "category": "DeveloperTool",
       "copyright": "© 2025-2026 Aether Contributors. MIT License.",
       "icon": [],
-      "identifier": "com.aether.desktop",
+      "identifier": "com.aether.tauri",
       "targets": ["deb", "appimage", "dmg", "msi"]
     },
     "security": {

@@ -19,7 +19,7 @@
 
 **Aether is your sovereign neural workstation.** It's designed to be a high-autonomy bridge between you and your local LLMs. By running entirely on your own hardware, Aether ensures that your thoughts, data, and workflows remain private and offline. 
 
-This repository contains the **Tauri-based desktop workstation**, offering a unified, high-performance experience for **Linux**, **Windows**, and **macOS**.
+This repository contains the **Aether-Tauri workstation**, offering a unified, high-performance experience for **Linux**, **Windows**, and **macOS**.
 
 ---
 

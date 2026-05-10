@@ -2,7 +2,7 @@
   "name": "aether-tauri",
   "productName": "Aether",
   "version": "26.5.1",
-  "description": "Aether — The Local-First Neural Operating Interface. Unified desktop workstation for Windows & macOS.",
+  "description": "Aether-Tauri — The Local-First Neural Operating Interface. Unified workstation for Windows & macOS.",
   "main": "dist/index.js",
   "scripts": {
     "dev": "vite",

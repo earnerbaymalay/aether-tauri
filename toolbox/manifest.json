@@ -1,32 +1,172 @@
 {
   "tools": [
-    {"name": "get_date", "description": "Current date/time", "script": "get_date.ps1", "enabled": true},
-    {"name": "get_battery", "description": "Battery status", "script": "get_battery.ps1", "enabled": true},
-    {"name": "list_files", "description": "Lists files in a dir", "script": "list_files.ps1", "enabled": true},
-    {"name": "gh_status", "description": "Check git/gh status", "script": "gh_status.ps1", "enabled": true},
-    {"name": "web_search", "description": "Privacy-first web search using DuckDuckGo", "script": "web_search.ps1", "enabled": true},
-    {"name": "web_read", "description": "Read content of a URL as plain text", "script": "web_read.ps1", "enabled": true},
-    {"name": "obsidian_list_notes", "description": "List all markdown notes in Obsidian vault", "script": "obsidian_list_notes.ps1", "enabled": true},
-    {"name": "obsidian_read_note", "description": "Read a specific note from Obsidian", "script": "obsidian_read_note.ps1", "enabled": true},
-    {"name": "obsidian_search_notes", "description": "Search Obsidian vault for a keyword", "script": "obsidian_search_notes.ps1", "enabled": true},
-    {"name": "log_analyzer", "description": "Analyze system, application, and security logs for patterns and errors", "script": "log_analyzer.ps1", "enabled": true},
-    {"name": "dependency_checker", "description": "Check project dependencies and flag missing/outdated packages", "script": "dependency_checker.ps1", "enabled": true},
-    {"name": "model_router", "description": "Display and manage AI model routing configuration and optimization", "script": "model_router.ps1", "enabled": true},
-    {"name": "config_manager", "description": "Manage Aether configuration profiles and settings", "script": "config_manager.ps1", "enabled": true},
-    {"name": "backup_manager", "description": "Comprehensive backup and restore for Aether and related projects", "script": "backup_manager.ps1", "enabled": true},
-    {"name": "system_monitor", "description": "Real-time system monitoring with alerts and metrics history", "script": "system_monitor.ps1", "enabled": true},
-    {"name": "lsp_server", "description": "Language Server Protocol for code intelligence (diagnostics, symbols, definitions)", "script": "lsp_server.ps1", "enabled": true},
-    {"name": "token_optimizer", "description": "Token compression and context optimization (60-90% token savings)", "script": "token_optimizer.ps1", "enabled": true},
-    {"name": "read_file", "description": "Read the content of a file", "script": "read_file.ps1", "enabled": true},
-    {"name": "write_file", "description": "Write or create a file with content", "script": "write_file.ps1", "enabled": true},
-    {"name": "shell_exec", "description": "Execute a shell command", "script": "shell_exec.ps1", "enabled": true},
-    {"name": "get_sys_info", "description": "Get detailed system information", "script": "get_sys_info.ps1", "enabled": true},
-    {"name": "voice_ops", "description": "Voice operations (speak text or transcribe audio file)", "script": "voice_ops.ps1", "enabled": true},
-    {"name": "edit_file", "description": "Surgical replacement of text in a file (args: path, old_text, new_text)", "script": "edit_file.ps1", "enabled": true},
-    {"name": "grep_search", "description": "Search for pattern in files (args: pattern, path, include_glob)", "script": "grep_search.ps1", "enabled": true},
-    {"name": "glob_files", "description": "List files matching a glob pattern (args: pattern, path)", "script": "glob_files.ps1", "enabled": true},
-    {"name": "system_optimizer", "description": "OS-agnostic system optimization and deep cleanup (Nexus11 logic)", "script": "system_optimizer.py", "enabled": true},
-    {"name": "net_scan", "description": "Security: Port scanner for target IP/Host (args: target, start_port, end_port)", "script": "net_scan.ps1", "enabled": true},
-    {"name": "net_recon", "description": "Security: Network reconnaissance and DNS lookup (args: target)", "script": "net_recon.ps1", "enabled": true}
+    {
+      "name": "get_date",
+      "description": "Current date/time",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "get_battery",
+      "description": "Battery status",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "list_files",
+      "description": "Lists files in a dir",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "gh_status",
+      "description": "Check git/gh status",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "web_search",
+      "description": "Privacy-first web search using DuckDuckGo",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "web_read",
+      "description": "Read content of a URL as plain text",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "obsidian_list_notes",
+      "description": "List all markdown notes in Obsidian vault",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "obsidian_read_note",
+      "description": "Read a specific note from Obsidian",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "obsidian_search_notes",
+      "description": "Search Obsidian vault for a keyword",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "log_analyzer",
+      "description": "Analyze system, application, and security logs for patterns and errors",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "dependency_checker",
+      "description": "Check project dependencies and flag missing/outdated packages",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "model_router",
+      "description": "Display and manage AI model routing configuration and optimization",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "config_manager",
+      "description": "Manage Aether configuration profiles and settings",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "backup_manager",
+      "description": "Comprehensive backup and restore for Aether and related projects",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "system_monitor",
+      "description": "Real-time system monitoring with alerts and metrics history",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "lsp_server",
+      "description": "Language Server Protocol for code intelligence (diagnostics, symbols, definitions)",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "token_optimizer",
+      "description": "Token compression and context optimization (60-90% token savings)",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "read_file",
+      "description": "Read the content of a file",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "write_file",
+      "description": "Write or create a file with content",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "shell_exec",
+      "description": "Execute a shell command",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "get_sys_info",
+      "description": "Get detailed system information",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "voice_ops",
+      "description": "Voice operations (speak text or transcribe audio file)",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "edit_file",
+      "description": "Surgical replacement of text in a file (args: path, old_text, new_text)",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "grep_search",
+      "description": "Search for pattern in files (args: pattern, path, include_glob)",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "glob_files",
+      "description": "List files matching a glob pattern (args: pattern, path)",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "system_optimizer",
+      "description": "OS-agnostic system optimization and deep cleanup (Nexus11 logic)",
+      "script": "system_optimizer.py",
+      "enabled": true
+    },
+    {
+      "name": "net_scan",
+      "description": "Security: Port scanner for target IP/Host (args: target, start_port, end_port)",
+      "script": "core_tools.py",
+      "enabled": true
+    },
+    {
+      "name": "net_recon",
+      "description": "Security: Network reconnaissance and DNS lookup (args: target)",
+      "script": "core_tools.py",
+      "enabled": true
+    }
   ]
 }

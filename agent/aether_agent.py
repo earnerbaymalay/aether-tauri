@@ -97,8 +97,6 @@ LOGGER = AetherLogger(LOG_DIR, level=CONFIG["log_level"])
 
 # --- Initialization ---
 VAULT_PATHS = [VAULT_DIR]
-SHARED_VAULT_PATH = Path("C:/Users/earnerbaymalay/Documents/vault")
-if SHARED_VAULT_PATH.exists(): VAULT_PATHS.append(SHARED_VAULT_PATH)
 
 RAG = AetherRAG(VAULT_PATHS)
 LINK = AetherLink(VAULT_DIR)
@@ -173,10 +171,28 @@ def run_tool(name, args=""):
     if not tool: return f"Error: Tool '{name}' not found."
     
     try:
-        import ast
+        import core_tools
+        if hasattr(core_tools, name):
+            try:
+                import shlex
+                try:
+                    parsed = json.loads(f"[{args}]")
+                    cmd_args = [str(a) for a in parsed]
+                except:
+                    cmd_args = shlex.split(args)
+            except: cmd_args = [args.strip()] if args else []
+            return str(getattr(core_tools, name)(*cmd_args))
+    except Exception as e:
+        pass # fallback to script if not in core_tools
+
+    try:
+        import shlex
         try:
-            parsed = ast.literal_eval(f"({args})")
-            cmd_args = [str(a) for a in parsed] if isinstance(parsed, (tuple, list)) else [str(parsed)]
+            try:
+                parsed = json.loads(f"[{args}]")
+                cmd_args = [str(a) for a in parsed]
+            except:
+                cmd_args = shlex.split(args)
         except: cmd_args = [args.strip()] if args else []
             
         if os.name == 'nt':
@@ -333,9 +349,13 @@ def chat_loop(ui, history):
                 console.print("[bold cyan]AI » [/]", end="")
                 resp = ""; start = time.time(); tokens = 0
                 for chunk in generate_completion_stream(history, CONFIG["active_model"]):
-                    console.print(chunk, end=""); resp += chunk; tokens += 1
+                    console.print(chunk, end="")
+                    sys.stdout.flush()
+                    resp += chunk; tokens += 1
                 ui.stats["tps"] = tokens / (time.time() - start) if (time.time()-start) > 0 else 0
-                console.print(""); console.print(ui.render_header())
+                console.print("")
+                sys.stdout.flush()
+                console.print(ui.render_header())
 
                 threading.Thread(target=lambda: MEMORY.background_shadow_monitor(user_input, resp), daemon=True).start()
 
