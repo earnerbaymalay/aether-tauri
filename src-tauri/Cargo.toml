@@ -1,6 +1,6 @@
 [package]
 name = "aether-tauri"
-version = "26.05.1"
+version = "26.5.1"
 description = "Aether — The Local-First Neural Operating Interface"
 authors = ["pat21 <earnerbaymalay>"]
 license = "MIT"
