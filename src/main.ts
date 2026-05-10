@@ -185,6 +185,10 @@ document.getElementById('toggle-ai-bloat')?.addEventListener('change', (e) => {
     runNexusOptimization('AI Bloat Killer', (e.target as HTMLInputElement).checked);
 });
 
+document.getElementById('toggle-ghost')?.addEventListener('change', (e) => {
+    runNexusOptimization('Ghost Mode', (e.target as HTMLInputElement).checked);
+});
+
 document.getElementById('btn-clean')?.addEventListener('click', () => {
     runNexusOptimization('System Deep Clean', true);
 });

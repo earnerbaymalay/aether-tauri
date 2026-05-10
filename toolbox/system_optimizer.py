@@ -80,10 +80,51 @@ def optimize_mac():
     
     print("✓ macOS optimizations applied.")
 
+def run_ghost_mode():
+    print("👻 Ghost Mode Engaged. Monitoring system for dynamic optimization...")
+    import psutil
+    import time
+    
+    high_perf_apps = ["rustc", "npm", "node", "ollama", "llama-cli", "python3", "docker", "vlc", "steam"]
+    gaming_mode_active = False
+    
+    try:
+        while True:
+            # Check for high-performance apps
+            active_apps = [p.name().lower() for p in psutil.process_iter(['name'])]
+            found_high_perf = any(app in " ".join(active_apps) for app in high_perf_apps)
+            
+            if found_high_perf and not gaming_mode_active:
+                print("🚀 High-performance application detected. Engaging Gaming Mode...")
+                if platform.system() == "Windows":
+                    # Ultimate Performance
+                    subprocess.run('powercfg -setactive e9a42b02-d5df-448d-aa00-03f14749eb61', shell=True)
+                elif platform.system() == "Linux":
+                    # Simple linux equivalent
+                    subprocess.run("sudo cpupower frequency-set -g performance", shell=True)
+                gaming_mode_active = True
+                
+            elif not found_high_perf and gaming_mode_active:
+                print("🍃 System idle. Reverting to balanced power...")
+                if platform.system() == "Windows":
+                    subprocess.run('powercfg -setactive 381b4222-f694-41f0-9685-ff5bb260df2e', shell=True)
+                elif platform.system() == "Linux":
+                    subprocess.run("sudo cpupower frequency-set -g powersave", shell=True)
+                gaming_mode_active = False
+                
+            time.sleep(10)
+    except KeyboardInterrupt:
+        print("\nGhost Mode terminated.")
+
 def main():
     parser = argparse.ArgumentParser(description="Nexus Fusion System Optimizer for Aether")
     parser.add_argument("--auto", action="store_true", help="Run with default optimizations")
+    parser.add_argument("--ghost", action="store_true", help="Engage background Ghost Mode")
     args = parser.parse_args()
+
+    if args.ghost:
+        run_ghost_mode()
+        return
 
     system = platform.system()
     if system == "Windows":
