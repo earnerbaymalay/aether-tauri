@@ -74,6 +74,16 @@ ai
 
 ---
 
+## 🌌 Universal Computer Use
+
+Aether has evolved into a self-evolving neural partner with the following advanced modules:
+- **👻 Ghost Mode:** Dynamic background process monitoring and optimization.
+- **👁️ Aether Eye (Vision):** Real-time screen awareness and UI debugging via moondream.
+- **📂 AetherFS (Semantic FS):** System-wide semantic search across all your local files.
+- **🌀 Ralph Loop:** Autonomous ReAct loop for multi-turn terminal task execution.
+- **🔗 AetherLink (P2P Sync):** Secure, encrypted cross-device memory synchronization.
+- **⌨️ System Automation:** Direct control over windows, applications, and input events.
+
 ## 🛡️ Nexus Shield
 
 Aether now includes a visual system optimizer and privacy manager. Access it via the "Nexus Shield" button to manage:
