@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "Aether",
-    "version": "26.05.1"
+    "version": "26.5.1"
   },
   "tauri": {
     "allowlist": {

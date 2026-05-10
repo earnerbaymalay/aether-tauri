@@ -1,7 +1,7 @@
 {
   "name": "aether-tauri",
   "productName": "Aether",
-  "version": "26.05.1",
+  "version": "26.5.1",
   "description": "Aether — The Local-First Neural Operating Interface. Unified desktop workstation for Windows & macOS.",
   "main": "dist/index.js",
   "scripts": {
