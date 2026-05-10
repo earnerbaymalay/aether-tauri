@@ -105,5 +105,5 @@ fn main() {
             check_aether_install
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Aether Desktop");
+        .expect("error while running Aether - Tauri");
 }

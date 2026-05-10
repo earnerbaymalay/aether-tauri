@@ -1,8 +1,8 @@
 [package]
-name = "aether-desktop"
-version = "1.0.0"
-description = "Aether-AI Desktop — Local-first AI Workstation"
-authors = ["Aether-AI Contributors"]
+name = "aether-tauri"
+version = "26.05.1"
+description = "Aether — The Local-First Neural Operating Interface"
+authors = ["pat21 <earnerbaymalay>"]
 license = "MIT"
 repository = "https://github.com/earnerbaymalay/aether"
 edition = "2021"

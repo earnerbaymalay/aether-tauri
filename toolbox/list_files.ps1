@@ -1,0 +1,1 @@
+Get-ChildItem -Path ($args[0] ?? ".") | Select-Object Name, Length, LastWriteTime

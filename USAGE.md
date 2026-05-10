@@ -1,4 +1,4 @@
-# Aether Desktop usage guide
+# Aether - Tauri usage guide
 
 Instructions for setup, first launch, and configuration.
 
@@ -16,8 +16,8 @@ Instructions for setup, first launch, and configuration.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/earnerbaymalay/aether-desktop.git
-   cd aether-desktop
+   git clone https://github.com/earnerbaymalay/aether-tauri.git
+   cd aether-tauri
    ```
 
 2. Install Node.js dependencies:
@@ -51,7 +51,7 @@ Instructions for setup, first launch, and configuration.
    ollama pull llama3.2
    ```
 
-3. Configure the Ollama endpoint within Aether Desktop's settings.
+3. Configure the Ollama endpoint within Aether - Tauri's settings.
 
 ### llama.cpp integration
 

@@ -1,95 +1,86 @@
 <div align="center">
 
-# 🖥️ A E T H E R — D E S K T O P
-### *Local AI for macOS, Windows & Linux.*
+# 🌌 A E T H E R — T A U R I
+### *The Local-First Neural Operating Interface.*
 
-[![Version](https://img.shields.io/badge/version-26.04.2-50fa7b?style=for-the-badge)](VERSIONS.md)
+[![Version](https://img.shields.io/badge/version-26.05.1-50fa7b?style=for-the-badge)](VERSIONS.md)
 [![Tauri](https://img.shields.io/badge/framework-Tauri-FFC131?style=for-the-badge&logo=tauri)](https://tauri.app/)
 [![License](https://img.shields.io/badge/license-MIT-f1fa8c?style=for-the-badge)](LICENSE)
 
-**[📲 Download](https://github.com/earnerbaymalay/aether-desktop/releases)** · **[🌐 Sideload Hub](https://earnerbaymalay.github.io/sideload/)** · **[📖 Usage Guide](USAGE.md)** · **[🔧 Troubleshooting](TROUBLESHOOTING.md)**
+**[📲 Download](https://github.com/earnerbaymalay/aether-tauri/releases)** · **[🌐 Sideload Hub](https://earnerbaymalay.github.io/sideload/)** · **[📖 Usage Guide](USAGE.md)** · **[🔧 Troubleshooting](TROUBLESHOOTING.md)**
 
 </div>
 
 ---
 
-![Aether Desktop](docs/media/hero.svg)
+![Aether - Tauri](docs/media/hero.svg)
 
-## What is Aether Desktop?
+## What is Aether?
 
-**Cross-platform desktop app connecting to local AI models (Ollama, llama.cpp) through a terminal-style interface.** Built with Tauri (Rust backend + TypeScript frontend via xterm.js). Same local-first approach as Android and Apple versions.
+**Aether is a sovereign neural workstation.** It provides a high-autonomy interface to local AI models (Ollama, llama.cpp), giving you a private, offline command center that runs entirely on your own hardware. 
+
+This repository houses the **Tauri-based desktop workstation**, unified for both **Windows** and **macOS**.
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### Requirements
+### 1. Prerequisites (All Platforms)
+- **[Ollama](https://ollama.com/):** Must be running locally for model inference.
+- **Node.js 20+:** Required for the UI and dev tools.
+- **Python 3.12+:** Required for the autonomous Agent Core.
 
-- Node.js 18+
-- Rust
-- Ollama running locally
+### 2. Setup (Windows)
+Run the automated PowerShell installer:
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install-windows.ps1
+```
 
-### Build & Run
-
+### 3. Setup (macOS)
+Run the automated shell installer:
 ```bash
-git clone https://github.com/earnerbaymalay/aether-desktop.git
-cd aether-desktop
-npm install
-npm run tauri dev
+chmod +x ./install.sh
+./install.sh
 ```
 
-### Use
-
-1. Start Ollama: `ollama serve`
-2. Pull a model: `ollama pull llama3.2`
-3. Configure endpoint in Aether Desktop settings
-
-### Production Build
-
+### 4. Launch
+Launch the neural interface from your terminal:
 ```bash
-npm run tauri build
+# Windows
+ai
+
+# macOS
+./aether.sh
 ```
 
 ---
 
-## Architecture
-
-```
-aether-desktop/
-├── src-tauri/              # Rust backend
-│   ├── src/main.rs
-│   ├── Cargo.toml
-│   └── tauri.conf.json
-├── src/                    # TypeScript frontend
-│   ├── main.ts
-│   ├── components/
-│   └── styles/
-├── index.html
-├── package.json
-└── vite.config.ts
-```
-
----
-
-## All Aether Platforms
+### Aether Ecosystem
 
 <div align="center">
 
 | Platform | Repository | Version |
 |----------|------------|---------|
-| 📱 **Android** | [aether](https://github.com/earnerbaymalay/aether) | 26.04.2 |
-| 🖥️ **macOS / iPad** | [aether-apple](https://github.com/earnerbaymalay/aether-apple) | 26.04.2 |
-| 🖥️ **Desktop** | [aether-desktop](https://github.com/earnerbaymalay/aether-desktop) | 26.04.2 |
-| 📲 **Sideload Hub** | [sideload](https://earnerbaymalay.github.io/sideload/) | Live |
+| 📱 **Android (Termux)** | [aether-android](https://github.com/earnerbaymalay/aether-android) | 26.05.1 |
+| 🖥️ **Desktop (Tauri)** | [aether-tauri](https://github.com/earnerbaymalay/aether-tauri) | 26.05.1 |
 
 </div>
 
 ---
 
+## 🌌 Core Architecture
+
+- **🧠 The Brain:** Specialized model tiers (`HERMES` for agency, `DEEPSEEK` for logic).
+- **🛠️ The Toolbox:** Platform-native tools (PowerShell for Windows, Bash for macOS/Linux).
+- **🗄️ AetherVault:** Markdown-based persistent memory with **Neural Distillation**.
+
+---
+
 ## Documentation
 
-- **[📖 Usage Guide](USAGE.md)** — Setup, configuration, connecting to models.
-- **[🔧 Troubleshooting](TROUBLESHOOTING.md)** — Tauri build errors, connection issues.
+- **[📖 Usage Guide](USAGE.md)** — Toolbox, AetherVault, and Setup.
+- **[🗺️ Roadmap](ROADMAP.md)** — Future development goals and feature tracking.
+- **[🔧 Troubleshooting](TROUBLESHOOTING.md)** — Ollama connections and script permissions.
 
 ---
 

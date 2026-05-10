@@ -1,0 +1,26 @@
+{
+  "tools": [
+    {"name": "get_date", "description": "Current date/time", "script": "get_date.ps1", "enabled": true},
+    {"name": "get_battery", "description": "Battery status", "script": "get_battery.ps1", "enabled": true},
+    {"name": "list_files", "description": "Lists files in a dir", "script": "list_files.ps1", "enabled": true},
+    {"name": "gh_status", "description": "Check git/gh status", "script": "gh_status.ps1", "enabled": true},
+    {"name": "web_search", "description": "Privacy-first web search using DuckDuckGo", "script": "web_search.ps1", "enabled": true},
+    {"name": "web_read", "description": "Read content of a URL as plain text", "script": "web_read.ps1", "enabled": true},
+    {"name": "obsidian_list_notes", "description": "List all markdown notes in Obsidian vault", "script": "obsidian_list_notes.ps1", "enabled": true},
+    {"name": "obsidian_read_note", "description": "Read a specific note from Obsidian", "script": "obsidian_read_note.ps1", "enabled": true},
+    {"name": "obsidian_search_notes", "description": "Search Obsidian vault for a keyword", "script": "obsidian_search_notes.ps1", "enabled": true},
+    {"name": "log_analyzer", "description": "Analyze system, application, and security logs for patterns and errors", "script": "log_analyzer.ps1", "enabled": true},
+    {"name": "dependency_checker", "description": "Check project dependencies and flag missing/outdated packages", "script": "dependency_checker.ps1", "enabled": true},
+    {"name": "model_router", "description": "Display and manage AI model routing configuration and optimization", "script": "model_router.ps1", "enabled": true},
+    {"name": "config_manager", "description": "Manage Aether configuration profiles and settings", "script": "config_manager.ps1", "enabled": true},
+    {"name": "backup_manager", "description": "Comprehensive backup and restore for Aether and related projects", "script": "backup_manager.ps1", "enabled": true},
+    {"name": "system_monitor", "description": "Real-time system monitoring with alerts and metrics history", "script": "system_monitor.ps1", "enabled": true},
+    {"name": "lsp_server", "description": "Language Server Protocol for code intelligence (diagnostics, symbols, definitions)", "script": "lsp_server.ps1", "enabled": true},
+    {"name": "token_optimizer", "description": "Token compression and context optimization (60-90% token savings)", "script": "token_optimizer.ps1", "enabled": true},
+    {"name": "read_file", "description": "Read the content of a file", "script": "read_file.ps1", "enabled": true},
+    {"name": "write_file", "description": "Write or create a file with content", "script": "write_file.ps1", "enabled": true},
+    {"name": "shell_exec", "description": "Execute a shell command", "script": "shell_exec.ps1", "enabled": true},
+    {"name": "get_sys_info", "description": "Get detailed system information", "script": "get_sys_info.ps1", "enabled": true},
+    {"name": "voice_ops", "description": "Voice operations (speak text or transcribe audio file)", "script": "voice_ops.ps1", "enabled": true}
+  ]
+}

@@ -1,6 +1,6 @@
-# Contributing to Aether Desktop
+# Contributing to Aether - Tauri
 
-Thanks for your interest! Aether Desktop is the Tauri-based desktop companion to the Aether AI ecosystem.
+Thanks for your interest! Aether - Tauri is the Tauri-based desktop companion to the Aether AI ecosystem.
 
 ## Quick Guide
 

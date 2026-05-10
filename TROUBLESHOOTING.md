@@ -1,4 +1,4 @@
-# Aether Desktop troubleshooting guide
+# Aether - Tauri troubleshooting guide
 
 Common issues and solutions.
 
@@ -21,7 +21,7 @@ Ensure Node.js (version 18+) and Rust are installed and configured correctly in 
 - Verify Ollama is running (`ollama serve`).
 - Confirm that the correct model is pulled (`ollama pull llama3.2`).
 - Check firewall settings if necessary.
-- Ensure the Ollama endpoint in Aether Desktop settings is correct.
+- Ensure the Ollama endpoint in Aether - Tauri settings is correct.
 
 ### AI models slow or unresponsive
 - Check Ollama or llama.cpp logs for errors.

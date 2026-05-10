@@ -1,4 +1,4 @@
-name: Aether Desktop CI
+name: Aether - Tauri CI
 
 on:
   push:
