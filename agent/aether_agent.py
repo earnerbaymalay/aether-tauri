@@ -222,19 +222,17 @@ def verify_tool_output(intent, tool_name, output):
     except: return "SUCCESS"
 
 def generate_completion_stream(messages, model):
-    payload = {"model": model, "messages": messages, "stream": True, "options": {"num_thread": CONFIG["threads"]}}
+    # Bridge to OpenClaw Agent
+    # Extract the last user message for the OpenClaw CLI
+    last_user_msg = next((m['content'] for m in reversed(messages) if m['role'] == 'user'), "")
     try:
-        r = requests.post(OLLAMA_CHAT_URL, json=payload, stream=True, timeout=120)
-        for line in r.iter_lines():
-            if line: yield json.loads(line.decode("utf-8")).get("message", {}).get("content", "")
-    except: yield "Link unstable."
-
-def get_neural_plan(query, context=""):
-    prompt = f"System: Planner. 3-step plan.\nContext: {context}\nUser: {query}\nPlan:"
-    try:
-        r = requests.post(OLLAMA_API_URL, json={"model": CONFIG["logic_model"], "prompt": prompt, "stream": False}, timeout=45)
-        return r.json().get("response", "Planning failed.")
-    except: return "Logic engine offline."
+        # We use --print to get the final output and --quiet to suppress banners
+        cmd = ["openclaw", "agent", "--message", last_user_msg, "--print", "--quiet"]
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
+        for line in process.stdout:
+            yield line
+    except Exception as e:
+        yield f"OpenClaw Bridge Error: {e}"
 
 # --- Interaction Handlers ---
 
@@ -265,9 +263,8 @@ def handle_settings(ui):
         table.add_row("2. RAG", str(CONFIG["rag_enabled"]))
         table.add_row("3. Threads", str(CONFIG["threads"]))
         table.add_row("4. Browser", CONFIG["browser_type"])
-        table.add_row("5. Browser Path", CONFIG["browser_path"])
-        table.add_row("6. Theme", CONFIG["theme"])
-        table.add_row("7. Log Level", CONFIG["log_level"])
+        table.add_row("5. Theme", CONFIG["theme"])
+        table.add_row("6. Log Level", CONFIG["log_level"])
         console.print(table)
         choice = console.input("\nEdit # or 'back' » ").strip()
         if choice == 'back': break
@@ -275,9 +272,8 @@ def handle_settings(ui):
         elif choice == '2': CONFIG["rag_enabled"] = not CONFIG["rag_enabled"]
         elif choice == '3': CONFIG["threads"] = int(console.input("Threads » "))
         elif choice == '4': CONFIG["browser_type"] = console.input("Browser » ")
-        elif choice == '5': CONFIG["browser_path"] = console.input("Path » ")
-        elif choice == '6': CONFIG["theme"] = console.input("Theme » ")
-        elif choice == '7': CONFIG["log_level"] = console.input("Log Level » ")
+        elif choice == '5': CONFIG["theme"] = console.input("Theme » ")
+        elif choice == '6': CONFIG["log_level"] = console.input("Log Level » ")
         save_config(CONFIG)
 
 def handle_memory(ui):
@@ -338,38 +334,28 @@ def chat_loop(ui, history):
                 if cmd == "clear": os.system('cls' if os.name == 'nt' else 'clear'); console.print(ui.render_header()); continue
                 continue
 
-            ui.mode = "NEURAL_LINK"
-            context = RAG.query(user_input) if CONFIG["rag_enabled"] else ""
-            if len(user_input.split()) > 10:
-                with console.status("[magenta]Planning..."): console.print(Panel(get_neural_plan(user_input, context), title="Neural Plan"))
-
-            history.append({"role": "user", "content": f"Context: {context}\nUser: {user_input}"})
+            ui.mode = "OPENCLAW_BRIDGE"
+            console.print("[bold cyan]Aether/Claw » [/]", end="")
+            resp = ""; start = time.time(); tokens = 0
             
-            for step in range(10): # Max 10 steps
-                console.print("[bold cyan]AI » [/]", end="")
-                resp = ""; start = time.time(); tokens = 0
-                for chunk in generate_completion_stream(history, CONFIG["active_model"]):
-                    console.print(chunk, end="")
-                    sys.stdout.flush()
-                    resp += chunk; tokens += 1
-                ui.stats["tps"] = tokens / (time.time() - start) if (time.time()-start) > 0 else 0
-                console.print("")
+            # Use OpenClaw for the full interaction (including tool steps)
+            for chunk in generate_completion_stream(history, CONFIG["active_model"]):
+                console.print(chunk, end="")
                 sys.stdout.flush()
-                console.print(ui.render_header())
+                resp += chunk; tokens += 1
+            
+            ui.stats["tps"] = tokens / (time.time() - start) if (time.time()-start) > 0 else 0
+            console.print("")
+            sys.stdout.flush()
+            console.print(ui.render_header())
 
-                threading.Thread(target=lambda: MEMORY.background_shadow_monitor(user_input, resp), daemon=True).start()
+            # Background Shadow Monitor for AetherVault
+            threading.Thread(target=lambda: MEMORY.background_shadow_monitor(user_input, resp), daemon=True).start()
+            
+            # We maintain a minimal history for the UI/Vault components
+            history.append({"role": "user", "content": user_input})
+            history.append({"role": "assistant", "content": resp})
 
-                tool_match = re.search(r"<tool>(\w+)\((.*?)\)</tool>", resp, re.DOTALL)
-                if tool_match:
-                    name, args = tool_match.groups()
-                    history.append({"role": "assistant", "content": resp})
-                    with console.status(f"[yellow]Step {step+1}: {name}..."):
-                        obs = run_tool(name, args)
-                        ver = verify_tool_output(user_input, name, obs)
-                    console.print(Panel(obs, title=f"Step {step+1}: {name} ({ver})", border_style="green" if "SUCCESS" in ver.upper() else "yellow"))
-                    history.append({"role": "user", "content": f"Observation: {obs}\nVerification: {ver}"})
-                    continue
-                history.append({"role": "assistant", "content": resp}); break
         except KeyboardInterrupt: break
 
 def main():
@@ -380,10 +366,7 @@ def main():
     SKILLS.discover_skills(os.getcwd())
     
     prompt = f"""You are Aether. Technical Agent.
-PROTOCOL: Use <tool>name(args)</tool> for all actions. Solve tasks iteratively.
-TOOLS:
-{MANIFEST.get_tool_descriptions()}
-{SKILLS.get_skill_prompt()}
+PROTOCOL: Use OpenClaw bridge for all actions.
 """
     chat_loop(ui, [{"role": "system", "content": prompt}])
 
