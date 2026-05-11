@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+dist/
+lib/
+pkgconfig/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
+
+# Tauri
+src-tauri/target/
+src-tauri/bin/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+aether-desktop/
+aether_launch.log
+aether_startup.log
+startup_debug.log
+$STATE_FILE

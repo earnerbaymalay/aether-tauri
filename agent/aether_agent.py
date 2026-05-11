@@ -322,7 +322,18 @@ def chat_loop(ui, history):
         try:
             ui.rotate_hint()
             console.print(ui.render_footer())
-            user_input = console.input("\n[bold white]User » [/]").strip()
+            
+            # Robust input handling for both TTY and non-TTY (Tauri)
+            if sys.stdin.isatty():
+                user_input = console.input("\n[bold white]User » [/]").strip()
+            else:
+                # In non-TTY mode, we don't want the prompt to be printed to stdout 
+                # as it might mess up structured communication, but here we just read.
+                # The prompt is handled by the frontend.
+                user_input = sys.stdin.readline().strip()
+                if not user_input: # EOF
+                    break
+            
             if not user_input: continue
             if user_input.startswith("/"):
                 cmd = user_input[1:].lower()

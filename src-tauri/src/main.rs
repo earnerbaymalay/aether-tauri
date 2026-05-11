@@ -25,7 +25,7 @@ struct SystemInfo {
 fn get_system_info() -> SystemInfo {
     let llama_cli = which::which("ollama").is_ok();
     let home = dirs::home_dir().unwrap_or_default();
-    let aether_dir = home.join("aether").exists();
+    let aether_dir = home.join("aether-droid").exists();
 
     SystemInfo {
         platform: std::env::consts::OS.to_string(),
@@ -66,7 +66,7 @@ fn run_benchmark(args: BenchmarkArgs) -> Result<BenchmarkResult, String> {
 #[tauri::command]
 fn check_aether_install() -> Result<bool, String> {
     let home = dirs::home_dir().ok_or("Could not find home directory")?;
-    Ok(home.join("aether").exists())
+    Ok(home.join("aether-droid").exists())
 }
 
 #[tauri::command]
