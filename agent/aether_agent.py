@@ -30,21 +30,11 @@ from mcp_client import MCPClientManager
 
 # --- Constants & Configuration ---
 AGENT_ROOT = Path(__file__).resolve().parent.parent
-DIR = Path.home() / "aether-droid"
-MODELS_DIR = DIR / "models"
-TOOLBOX_DIR = AGENT_ROOT / "toolbox"
-KNOWLEDGE_DIR = DIR / "knowledge"
-VAULT_DIR = KNOWLEDGE_DIR / "aethervault"
-FRAGMENTS_DIR = VAULT_DIR / "fragments"
 LOG_DIR = Path.home() / ".aether" / "logs"
 SESSION_DIR = Path.home() / ".aether" / "sessions"
 CONFIG_FILE = Path.home() / ".aether" / "config.json"
 OLLAMA_API_URL = "http://127.0.0.1:11434/api/generate"
 OLLAMA_CHAT_URL = "http://127.0.0.1:11434/api/chat"
-SYSTEM_PROFILE_PATH = VAULT_DIR / "SYSTEM_PROFILE.md"
-
-FRAGMENTS_DIR.mkdir(parents=True, exist_ok=True)
-LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 console = Console()
 SKILLS = UniversalSkillEngine(AGENT_ROOT)
@@ -66,7 +56,12 @@ HINTS = [
 ]
 
 # --- State & Persistence ---
+OBSIDIAN_DEFAULT = Path.home() / "Documents/Vault"
+if not OBSIDIAN_DEFAULT.exists():
+    OBSIDIAN_DEFAULT = Path.home() / "aether-vault"
+
 DEFAULT_CONFIG = {
+    "vault_path": str(OBSIDIAN_DEFAULT),
     "threads": 6,
     "uncensored": False,
     "auto_memory": True,
@@ -106,6 +101,18 @@ def save_config(config):
 
 CONFIG = load_config()
 LOGGER = AetherLogger(LOG_DIR, level=CONFIG["log_level"])
+
+# --- Path Definitions (Dynamic) ---
+AETHER_HOME = Path.home() / ".aether"
+MODELS_DIR = AETHER_HOME / "models"
+TOOLBOX_DIR = AGENT_ROOT / "toolbox"
+VAULT_DIR = Path(CONFIG.get("vault_path", str(OBSIDIAN_DEFAULT)))
+FRAGMENTS_DIR = VAULT_DIR / "fragments"
+SYSTEM_PROFILE_PATH = VAULT_DIR / "SYSTEM_PROFILE.md"
+
+MODELS_DIR.mkdir(parents=True, exist_ok=True)
+FRAGMENTS_DIR.mkdir(parents=True, exist_ok=True)
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 if CONFIG.get("mcp_enabled"):
     MCP_MANAGER = MCPClientManager(CONFIG.get("mcp_servers", {}))
@@ -289,6 +296,7 @@ def handle_settings(ui):
         table.add_row("4. Browser", CONFIG["browser_type"])
         table.add_row("5. Theme", CONFIG["theme"])
         table.add_row("6. Log Level", CONFIG["log_level"])
+        table.add_row("7. Vault Path", CONFIG["vault_path"])
         console.print(table)
         choice = console.input("\nEdit # or 'back' » ").strip()
         if choice == 'back': break
@@ -298,6 +306,7 @@ def handle_settings(ui):
         elif choice == '4': CONFIG["browser_type"] = console.input("Browser » ")
         elif choice == '5': CONFIG["theme"] = console.input("Theme » ")
         elif choice == '6': CONFIG["log_level"] = console.input("Log Level » ")
+        elif choice == '7': CONFIG["vault_path"] = console.input("Vault Path » ")
         save_config(CONFIG)
 
 def handle_memory(ui):
@@ -318,6 +327,31 @@ def handle_auto_fix(ui, error):
     if "```" in res and console.input("Apply? (y/n) » ").lower() == 'y':
         cmd = re.search(r"```.*?\n(.*?)\n```", res, re.DOTALL).group(1)
         console.print(run_tool("shell_exec", cmd))
+
+def handle_health(ui):
+    ui.mode = "HEALTH"
+    os.system('cls' if os.name == 'nt' else 'clear')
+    console.print(ui.render_header())
+    table = Table(title="System Health Check", border_style="green")
+    table.add_column("Component"); table.add_column("Status"); table.add_column("Path")
+    
+    # Check Vault
+    vault_status = "[bold green]OK[/]" if VAULT_DIR.exists() else "[bold red]MISSING[/]"
+    table.add_row("Neural Vault", vault_status, str(VAULT_DIR))
+    
+    # Check Models
+    models_status = "[bold green]OK[/]" if MODELS_DIR.exists() else "[bold red]MISSING[/]"
+    table.add_row("System Models", models_status, str(MODELS_DIR))
+    
+    # Check Ollama
+    try:
+        r = requests.get("http://127.0.0.1:11434/api/tags", timeout=2)
+        ollama_status = "[bold green]ONLINE[/]" if r.status_code == 200 else "[bold red]ERROR[/]"
+    except: ollama_status = "[bold red]OFFLINE[/]"
+    table.add_row("Ollama Engine", ollama_status, "127.0.0.1:11434")
+    
+    console.print(table)
+    console.input("\nPress Enter to return...")
 
 # --- UI & Main ---
 
@@ -366,6 +400,7 @@ def chat_loop(ui, history):
                 if cmd == "settings": handle_settings(ui); continue
                 if cmd == "memory": handle_memory(ui); continue
                 if cmd == "auto-fix": handle_auto_fix(ui, console.input("Error » ")); continue
+                if cmd == "health": handle_health(ui); continue
                 if cmd == "clear": os.system('cls' if os.name == 'nt' else 'clear'); console.print(ui.render_header()); continue
                 continue
 

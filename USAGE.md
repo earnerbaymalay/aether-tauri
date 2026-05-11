@@ -31,17 +31,15 @@ Aether routes your queries through specialized "Neural Pathways" based on the ta
 
 ---
 
-## 🗄️ AetherVault: Persistent Memory
+## 🗄️ AetherVault: Neural Knowledge Base
 
-AetherVault is more than just a folder; it's a structured knowledge base that evolves with you.
+AetherVault is now decoupled from the core application state, allowing you to use **Obsidian** or any separate local directory as your neural knowledge base.
 
-### How it Works
-1. **Fragments:** Transient thoughts and current session context.
-2. **Memories:** Distilled knowledge extracted from fragments.
-3. **Shadow Monitor:** A background process that silently extracts facts and preferences from your conversations into "Shadow Fragments."
-
-### Neural Distillation
-Periodically, the background process runs a "Distillation" task. It analyzes recent Fragments and updates the core `SYSTEM_PROFILE.md` and relevant Memory files, ensuring the AI always has an up-to-date mental model of your preferences and projects.
+### Features
+- **Obsidian Native:** If `~/Documents/Vault` exists, Aether automatically integrates with your Obsidian vault.
+- **Configurable Path:** Use `/settings` to point the neural vault to any local folder.
+- **Independent Storage:** The vault is kept separate from `aether-droid` (which handles models) to ensure your knowledge remains portable and clean.
+- **Shadow Monitor:** Background extraction of facts and preferences continues to enrich your chosen vault location.
 
 ---
 
