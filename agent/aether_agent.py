@@ -26,6 +26,7 @@ from p2p_sync import AetherLink
 from system_scanner import SystemScanner
 from skill_loader import UniversalSkillEngine
 from logger import AetherLogger
+from mcp_client import MCPClientManager
 
 # --- Constants & Configuration ---
 AGENT_ROOT = Path(__file__).resolve().parent.parent
@@ -76,7 +77,18 @@ DEFAULT_CONFIG = {
     "theme": "cyan",
     "verbosity": "NORMAL",
     "log_level": "INFO",
-    "browser_type": "firefox"
+    "browser_type": "firefox",
+    "mcp_enabled": False,
+    "mcp_servers": {
+        "fetch": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-fetch"]
+        },
+        "memory": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-memory"]
+        }
+    }
 }
 
 def load_config():
@@ -94,6 +106,11 @@ def save_config(config):
 
 CONFIG = load_config()
 LOGGER = AetherLogger(LOG_DIR, level=CONFIG["log_level"])
+
+if CONFIG.get("mcp_enabled"):
+    MCP_MANAGER = MCPClientManager(CONFIG.get("mcp_servers", {}))
+else:
+    MCP_MANAGER = MCPClientManager({})
 
 # --- Initialization ---
 VAULT_PATHS = [VAULT_DIR]
@@ -165,8 +182,15 @@ MEMORY = NeuralMemory(FRAGMENTS_DIR)
 def run_tool(name, args=""):
     LOGGER.info(f"Tool: {name} | Args: {args}")
     if name == "shell_exec" and "rm -rf" in args: return "Error: Destructive command blocked."
-    if name == "mcp_call": return "MCP Error: No active MCP host found."
     
+    # Check MCP tools first
+    if any(t["name"] == name for t in getattr(MCP_MANAGER, 'tools', [])):
+        try:
+            cmd_args = json.loads(args) if args.strip().startswith("{") else {"input": args}
+            return MCP_MANAGER.call_tool(name, cmd_args)
+        except Exception as e:
+            return f"MCP Argument Error: args must be valid JSON dictionary. {e}"
+
     tool = MANIFEST.get_tool(name)
     if not tool: return f"Error: Tool '{name}' not found."
     
@@ -372,12 +396,23 @@ def chat_loop(ui, history):
 def main():
     ui = AetherUI()
     with console.status("[green]Syncing..."): ui.stats["vault_size"] = RAG.index_vault()
+    
+    if CONFIG.get("mcp_enabled"):
+        with console.status("[blue]Starting MCP Servers..."):
+            try:
+                MCP_MANAGER.start()
+            except Exception as e:
+                LOGGER.error(f"MCP Startup Error: {e}")
+
     os.system('cls' if os.name == 'nt' else 'clear')
     console.print(ui.render_header())
     SKILLS.discover_skills(os.getcwd())
     
+    mcp_tools = MCP_MANAGER.get_tool_descriptions() if CONFIG.get("mcp_enabled") else ""
     prompt = f"""You are Aether. Technical Agent.
 PROTOCOL: Use OpenClaw bridge for all actions.
+MCP TOOLS:
+{mcp_tools}
 """
     chat_loop(ui, [{"role": "system", "content": prompt}])
 
