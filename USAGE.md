@@ -1,20 +1,33 @@
 # 📖 Aether - Tauri Usage Guide
 
-Welcome to the command center. This guide covers the essential operations of the Aether workstation.
+Welcome to the command center. This guide covers the essential operations of the Aether workstation, now powered by the **OpenClaw Hybrid Bridge**.
 
 ---
 
-## 🛠️ The Neural Toolbox
+## 🦾 OpenClaw Hybrid Bridge
 
-The Toolbox is the bridge between the AI and your operating system. It allows the agent to perform actions on your behalf.
+Aether now uses a "Hybrid Bridge" architecture. While the UI and local management stay in Aether, the actual intelligence and tool execution are offloaded to **OpenClaw**.
 
-### Available Tools
-- **File System:** Create, read, and modify files within allowed directories.
-- **Terminal Execution:** Run PowerShell (Windows) or Bash (Linux/macOS) commands.
-- **System Analysis:** Query system hardware, network status, and running processes.
+### Benefits
+- **Full MCP Support:** Use any Model Context Protocol server (like DuckDuckGo) directly.
+- **Advanced Agency:** Better multi-step task execution via OpenClaw's optimized loops.
+- **Unified Skills:** Aether gains all skills installed in your OpenClaw ecosystem.
 
-### Safety First
-By default, Aether prompts for confirmation before executing high-impact system commands. You can configure "Trust Zones" in `config.json` to allow certain directories or scripts to run without manual approval.
+### Setup
+Ensure the OpenClaw gateway is running before launching Aether:
+```bash
+openclaw gateway --port 18789 --force &
+```
+
+---
+
+## 🧠 Neural Pathways (AI Tiers)
+
+Aether routes your queries through specialized "Neural Pathways" based on the task type.
+
+- **🤖 AGENT (Primary):** Powered by `hermes3:8b`. This is your go-to for system operations, internet searches, and complex problem-solving.
+- **💻 CODE:** Powered by `qwen2.5-coder:3b`. A hyper-optimized model for generating, reviewing, and debugging code.
+- **🧠 LOGIC:** Powered by `deepseek-r1:8b`. Best for architectural planning, philosophical inquiry, or intense reasoning.
 
 ---
 
@@ -25,35 +38,20 @@ AetherVault is more than just a folder; it's a structured knowledge base that ev
 ### How it Works
 1. **Fragments:** Transient thoughts and current session context.
 2. **Memories:** Distilled knowledge extracted from fragments.
-3. **Journal:** A time-series log of your interactions and system changes.
+3. **Shadow Monitor:** A background process that silently extracts facts and preferences from your conversations into "Shadow Fragments."
 
 ### Neural Distillation
 Periodically, the background process runs a "Distillation" task. It analyzes recent Fragments and updates the core `SYSTEM_PROFILE.md` and relevant Memory files, ensuring the AI always has an up-to-date mental model of your preferences and projects.
 
 ---
 
-## ⚙️ Configuration
+## 🚀 Commands & Shortcuts
 
-Your `~/.aether/config.json` is the heart of the system.
-
-### Key Settings
-- `active_model`: The primary model for chat and general tasks.
-- `turbo_model`: A smaller, faster model used for quick tasks like summarization or tool selection.
-- `logic_model`: A large model (like DeepSeek) reserved for complex reasoning and debugging.
-- `rag_enabled`: Toggle the local vector database for document search.
-
----
-
-## 🚀 Advanced Usage
-
-### Running as a Background Agent
-You can start Aether in "Headless Mode" to act as a background assistant that monitors system events:
-```bash
-./aether.sh --headless
-```
-
-### Extending the Toolbox
-You can add custom scripts to `~/aether/toolbox`. Any executable placed here will automatically be indexed and available for the AI to call.
+- `/settings` - Configure models, threads, and UI theme.
+- `/memory` - Inspect recent AetherVault fragments.
+- `/health` - Run a system vitals check (CPU, RAM, Dependencies).
+- `/auto-fix` - Paste an error message to receive a self-healing command suggestion.
+- `/clear` - Resets the terminal interface view.
 
 ---
 

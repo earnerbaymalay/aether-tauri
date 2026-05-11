@@ -3,11 +3,11 @@
 # 🌌 A E T H E R — T A U R I
 ### *The Local-First Neural Operating Interface.*
 
-[![Version](https://img.shields.io/badge/version-26.05.1-50fa7b?style=for-the-badge)](VERSIONS.md)
+[![Version](https://img.shields.io/badge/version-26.05.2-50fa7b?style=for-the-badge)](VERSIONS.md)
 [![Tauri](https://img.shields.io/badge/framework-Tauri-FFC131?style=for-the-badge&logo=tauri)](https://tauri.app/)
 [![License](https://img.shields.io/badge/license-MIT-f1fa8c?style=for-the-badge)](LICENSE)
 
-**[📲 Download](https://github.com/earnerbaymalay/aether-tauri/releases)** · **[🌐 Sideload Hub](https://earnerbaymalay.github.io/sideload/)** · **[📖 Usage Guide](USAGE.md)** · **[🔧 Troubleshooting](TROUBLESHOOTING.md)**
+**[📲 Download](https://github.com/earnerbaymalay/aether-desktop/releases)** · **[🌐 Sideload Hub](https://earnerbaymalay.github.io/sideload/)** · **[📖 Usage Guide](USAGE.md)** · **[🔧 Troubleshooting](TROUBLESHOOTING.md)**
 
 </div>
 
@@ -17,7 +17,7 @@
 
 ## What is Aether?
 
-**Aether is your sovereign neural workstation.** It's designed to be a high-autonomy bridge between you and your local LLMs. By running entirely on your own hardware, Aether ensures that your thoughts, data, and workflows remain private and offline. 
+**Aether is your sovereign neural workstation.** It's designed to be a high-autonomy bridge between you and your local LLMs. By running entirely on your own hardware, Aether ensures that your thoughts, data, and workflows remain private and offline.
 
 This repository contains the **Aether-Tauri workstation**, offering a unified, high-performance experience for **Linux**, **Windows**, and **macOS**.
 
@@ -26,49 +26,38 @@ This repository contains the **Aether-Tauri workstation**, offering a unified, h
 ## 🚀 Quick Start
 
 ### 1. Prerequisites (All Platforms)
-- **[Ollama](https://ollama.com/):** The engine for model inference. Must be running locally.
-- **Node.js 20+:** Powers the neural interface's logic.
-- **Rust:** The backbone for Tauri's high-speed native bridge.
+- **[Ollama](https://ollama.com/):** Engine for model inference.
+- **[OpenClaw](https://github.com/google/gemini-cli):** The neural backbone for tool and MCP management.
+- **Node.js 20+** & **Rust**: Development toolchain.
 
-### 2. Setup (Linux - Mint/Ubuntu/Debian)
-Install system dependencies and the Rust toolchain:
+### 2. Setup
+Install system dependencies and pull optimized models:
 ```bash
-sudo apt-get update
-sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-source $HOME/.cargo/env
+# Pull recommended agentic models
+ollama pull hermes3:8b
+ollama pull qwen2.5-coder:3b
+
+# Install dependencies
 npm install
 ```
 
-### 3. Setup (Windows)
-Run the automated PowerShell installer:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install-windows.ps1
-```
-
-### 4. Setup (macOS)
-Run the automated shell installer:
+### 3. Launch
+Initialize the OpenClaw gateway and the neural interface:
 ```bash
-chmod +x ./install.sh
-./install.sh
-```
+# Start OpenClaw Gateway (required for bridge mode)
+openclaw gateway --port 18789 --force &
 
-### 5. Launch
-Initialize the neural interface:
-```bash
-# Linux & macOS
+# Launch Aether
 ./aether.sh
-
-# Windows
-ai
 ```
 
 ---
 
 ## 🌌 Core Features
 
-- **🧠 Multi-Tier Brain:** Configurable model selection for different tasks (e.g., `HERMES` for agency, `DEEPSEEK` for deep logic).
-- **🛠️ Integrated Toolbox:** Execute system-level commands (PowerShell/Bash) through the AI agent.
+- **🦾 OpenClaw Hybrid Bridge:** Offloads complex reasoning and tool execution to the OpenClaw ecosystem while maintaining Aether's native UI.
+- **🧠 Multi-Tier Brain:** Optimized model selection (e.g., `HERMES-8B` for agency, `QWEN-3B` for high-speed coding).
+- **🛠️ MCP Integration:** Access to the full Model Context Protocol ecosystem, including DuckDuckGo search and system-wide skills.
 - **🗄️ AetherVault:** A persistent, markdown-based memory system that uses **Neural Distillation** to summarize and store long-term context.
 - **🔒 Zero-Cloud:** No telemetry, no accounts, no subscriptions. Total data sovereignty.
 
@@ -78,24 +67,28 @@ ai
 
 Aether has evolved into a self-evolving neural partner with the following advanced modules:
 - **👻 Ghost Mode:** Dynamic background process monitoring and optimization.
-- **👁️ Aether Eye (Vision):** Real-time screen awareness and UI debugging via moondream.
-- **📂 AetherFS (Semantic FS):** System-wide semantic search across all your local files.
-- **🌀 Ralph Loop:** Autonomous ReAct loop for multi-turn terminal task execution.
+- **👁️ Aether Eye (Vision):** Real-time screen awareness via `moondream`.
+- **📂 AetherFS:** System-wide semantic search across all local files.
 - **🔗 AetherLink (P2P Sync):** Secure, encrypted cross-device memory synchronization.
-- **⌨️ System Automation:** Direct control over windows, applications, and input events.
 
-## 🛡️ Nexus Shield
+---
 
-Aether now includes a visual system optimizer and privacy manager. Access it via the "Nexus Shield" button to manage:
-- **Privacy Shield:** Block telemetry and OS-level ads.
-- **Gaming Mode:** Optimize power plans and network priority.
-- **AI Bloat Killer:** Disable integrated Copilot and Recall features.
+## AI Tiers (Neural Pathways)
+
+| Tier | Model | Best For |
+| :--- | :--- | :--- |
+| 🤖 **AGENT** | `hermes3:8b` | Tool use, complex tasks, memory, and full autonomy. |
+| 💻 **CODE** | `qwen2.5-coder:3b` | Code generation, review, and logic. Optimized for performance. |
+| 🧠 **LOGIC** | `deepseek-r1:8b` | Deep reasoning, architectural planning, and "thinking" mode. |
+
+---
 
 ## Documentation
 
-- **[📖 Usage Guide](USAGE.md)** — Deep dive into the Toolbox, AetherVault, and Setup.
-- **[🗺️ Roadmap](ROADMAP.md)** — What's coming next (Vision, Real-time Analysis).
-- **[🔧 Troubleshooting](TROUBLESHOOTING.md)** — Fixing connection issues and build errors.
+- **[📖 Usage Guide](USAGE.md)** — Deep dive into the Bridge Mode, AetherVault, and Setup.
+- **[🗺️ Roadmap](ROADMAP.md)** — Future development goals and completed integrations.
+- **[🔧 Troubleshooting](TROUBLESHOOTING.md)** — Fixing bridge connections and model errors.
+
 
 ---
 

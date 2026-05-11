@@ -16,9 +16,9 @@ OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
 DEFAULT_MODEL = "hermes3:8b"  # Capable and uncensored
 # Search for toolbox in common locations
 possible_paths = [
-    Path.home() / "aether-tauri" / "toolbox",
-    Path.home() / "aether" / "toolbox",
-    Path("C:/Users/earnerbaymalay/aether-tauri/toolbox")
+    Path.home() / "aether-desktop" / "toolbox",
+    Path.home() / "aether-droid" / "toolbox",
+    Path("C:/Users/earnerbaymalay/aether-desktop/toolbox")
 ]
 TOOLBOX_DIR = next((p for p in possible_paths if p.exists()), possible_paths[0])
 MANIFEST_PATH = TOOLBOX_DIR / "manifest.json"

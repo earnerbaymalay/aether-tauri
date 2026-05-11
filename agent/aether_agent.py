@@ -29,7 +29,7 @@ from logger import AetherLogger
 
 # --- Constants & Configuration ---
 AGENT_ROOT = Path(__file__).resolve().parent.parent
-DIR = Path.home() / "aether"
+DIR = Path.home() / "aether-droid"
 MODELS_DIR = DIR / "models"
 TOOLBOX_DIR = AGENT_ROOT / "toolbox"
 KNOWLEDGE_DIR = DIR / "knowledge"

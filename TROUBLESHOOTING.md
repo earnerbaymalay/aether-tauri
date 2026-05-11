@@ -28,6 +28,30 @@ xattr -d com.apple.quarantine /Applications/Aether.app
 
 ---
 
+## 🦾 OpenClaw Bridge Issues
+
+### Connection Refused (Port 18789)
+**Error:** `OpenClaw Bridge Error: [Errno 111] Connection refused`
+**Fix:** Ensure the OpenClaw gateway is running. Start it with:
+```bash
+openclaw gateway --port 18789 --force
+```
+
+### Model Not Found (OpenClaw)
+**Error:** `LLM request failed: model_not_found`
+**Fix:** Check your `~/.openclaw/openclaw.json` and ensure the model name matches exactly what `ollama list` reports.
+```bash
+# Verify model names
+ollama list
+# Update OpenClaw config if necessary
+openclaw config set agents.defaults.model.primary "ollama/hermes3:8b"
+```
+
+### No Tool Response
+If the AI seems to ignore tools, verify that `supportsTools` is set to `true` in your OpenClaw model configuration.
+
+---
+
 ## 🧠 AI & Model Issues
 
 ### Ollama Not Found
