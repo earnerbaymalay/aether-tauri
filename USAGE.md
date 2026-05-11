@@ -53,4 +53,21 @@ AetherVault is now decoupled from the core application state, allowing you to us
 
 ---
 
-[MIT License](LICENSE)
+## 📊 Aether Neural Monitor
+
+The Aether Neural Monitor is a real-time TUI dashboard that tracks the health of all neural services and system resources.
+
+### Launching the Monitor
+Run the following command in a separate terminal window:
+```bash
+aether-monitor
+```
+Or run it directly from the repository:
+```bash
+python3 tools/monitor.py
+```
+
+It monitors:
+- **Services:** Ollama, OpenClaw, and LM Studio.
+- **Processes:** Aether Agent, Aether Tauri, and OpenClaude.
+- **Hardware:** Live CPU and RAM usage.

@@ -56,6 +56,7 @@ openclaw gateway --port 18789 --force &
 ## 🌌 Core Features
 
 - **🦾 OpenClaw Hybrid Bridge:** Offloads complex reasoning and tool execution to the OpenClaw ecosystem while maintaining Aether's native UI.
+- **📊 Aether Neural Monitor:** Real-time TUI dashboard to track the health and metrics of Ollama, OpenClaw, LM Studio, and system resources.
 - **🧠 Multi-Tier Brain:** Optimized model selection (e.g., `HERMES-8B` for agency, `QWEN-3B` for high-speed coding).
 - **🛠️ MCP Integration:** Access to the full Model Context Protocol ecosystem, including DuckDuckGo search and system-wide skills.
 - **🗄️ AetherVault:** A persistent, markdown-based memory system that uses **Neural Distillation** to summarize and store long-term context.
