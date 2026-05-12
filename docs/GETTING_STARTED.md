@@ -87,12 +87,16 @@ Now that your computer is ready, let's start Aether!
 
 When the Aether window opens, you'll see different **Neural Pathways** (AGENT, TURBO, CODE, LOGIC). Think of these as different modes you can switch between depending on what you need.
 
+![Pathway Selection](assets/pathway_selection.png)
+
 1. Click on **AGENT**.
 2. A terminal window will open. Type your first prompt:
    > "Hello Aether! What are some things you can help me with?"
 3. Press **Enter**.
 
 Aether will think and respond. Because everything runs on your machine, no data is sent to the internet!
+
+![Terminal Prompt](assets/terminal_prompt.png)
 
 ---
 

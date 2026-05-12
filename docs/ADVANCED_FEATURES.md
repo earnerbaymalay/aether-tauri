@@ -53,6 +53,8 @@ You can give Aether new abilities instantly! If you want Aether to search your l
 
 Because Aether has the ability to run code and execute tools on your computer, security is paramount. The **Nexus Shield** is accessible from the UI's System Panel and offers one-click protections:
 
+![Nexus Shield UI](assets/nexus_shield_ui.png)
+
 - **Privacy Shield:** Blocks Windows/OS telemetry and ad trackers.
 - **AI Bloat Killer:** Disables built-in OS AI tools (like Windows Recall or Copilot) to save resources for Aether.
 - **Ghost Mode:** Dynamically throttles background apps when Aether is running a heavy inference task, giving the AI maximum CPU/RAM priority.

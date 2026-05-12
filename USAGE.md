@@ -46,6 +46,8 @@ Aether comes with a standalone text-based dashboard to monitor your system's hea
 
 We recommend running this in a separate terminal window alongside Aether:
 
+![Neural Monitor](docs/assets/neural_monitor.png)
+
 ```bash
 # Run the monitor script directly
 python3 tools/monitor.py
