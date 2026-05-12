@@ -24,7 +24,7 @@ The Aether project is built on a **Brain–Nervous System–Hands** pattern that
 └──────────────────┬──────────────────────────────┬────────────────────┘
                    │                              │
 ┌──────────────────▼──────────────┐  ┌────────────▼───────────────────┐
-│       🖥️  Aether-Desktop        │  │       📱  Aether-Droid          │
+│       🖥️  Aether-Tauri          │  │       📱  Aether-Droid          │
 │   Tauri (Rust) + TypeScript     │  │   Termux (Bash) + Python        │
 │   Full workstation UI           │  │   Mobile-optimized agent        │
 └─────────────────────────────────┘  └────────────────────────────────┘
@@ -39,7 +39,7 @@ The Aether project is built on a **Brain–Nervous System–Hands** pattern that
 
 ## 🚀 The Workstations
 
-### 🖥️ Aether-Desktop (`aether-tauri`)
+### 🖥️ Aether-Tauri (`aether-tauri`)
 
 The primary cross-platform neural workstation.
 
@@ -94,7 +94,7 @@ A high-level profile document written by Aether to summarize persistent user pre
 AetherLink (`agent/p2p_sync.py`) provides **encrypted peer-to-peer synchronization** of vault fragments between nodes.
 
 ```
-Aether-Desktop (port 8888)  ◄──────────────────►  Aether-Droid (port 8888)
+Aether-Tauri (port 8888)    ◄──────────────────►  Aether-Droid (port 8888)
     ~/.aether/vault/                                   ~/aether-vault/
        fragments/              Encrypted sync            fragments/
 ```
