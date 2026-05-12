@@ -73,7 +73,7 @@ DEFAULT_CONFIG = {
     "verbosity": "NORMAL",
     "log_level": "INFO",
     "browser_type": "firefox",
-    "mcp_enabled": False,
+    "mcp_enabled": True,
     "mcp_servers": {
         "fetch": {
             "command": "npx",
@@ -82,6 +82,10 @@ DEFAULT_CONFIG = {
         "memory": {
             "command": "npx",
             "args": ["-y", "@modelcontextprotocol/server-memory"]
+        },
+        "filesystem": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-filesystem", str(OBSIDIAN_DEFAULT)]
         }
     }
 }
@@ -276,8 +280,11 @@ def handle_help(ui):
     table.add_row("/help", "Display this reference guide")
     table.add_row("/settings", "Configure models, threads, and browser")
     table.add_row("/memory", "Manage AetherVault memory fragments")
+    table.add_row("/link", "AetherLink P2P sync (status | sync [ip] | peers)")
     table.add_row("/auto-fix", "Self-healing error analysis")
     table.add_row("/health", "Check system vitals and dependencies")
+    table.add_row("/vision <path>", "Aether Eye: Analyze image")
+    table.add_row("/voice", "Voice Ops: Dictate via microphone")
     table.add_row("/clear", "Reset interface view")
     table.add_row("/exit", "Terminate session")
     console.print(table)
@@ -350,7 +357,98 @@ def handle_health(ui):
     except: ollama_status = "[bold red]OFFLINE[/]"
     table.add_row("Ollama Engine", ollama_status, "127.0.0.1:11434")
     
-    console.print(table)
+    # Check MCP Servers
+    if CONFIG.get("mcp_enabled"):
+        mcp_status = MCP_MANAGER.get_server_status()
+        for srv_name, connected in mcp_status.items():
+            status = "[bold green]CONNECTED[/]" if connected else "[bold red]DISCONNECTED[/]"
+            table.add_row(f"MCP: {srv_name}", status, "stdio")
+    
+    # Check AetherLink
+    link_status = "[bold green]LISTENING[/]" if LINK.running else "[bold red]STOPPED[/]"
+    table.add_row("AetherLink P2P", link_status, f"port {LINK.port}")
+    
+    time.sleep(1)
+    console.print("[green]System checks complete.[/]")
+    console.input("\nPress Enter to return...")
+
+def handle_vision(ui, args):
+    import base64
+    path = Path(args.strip())
+    if not path.exists():
+        console.print(f"[red]Error: Image not found at {path}[/red]")
+        return
+        
+    console.print(f"\n[cyan]Aether Eye analyzing {path.name}...[/cyan]")
+    try:
+        with open(path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("utf-8")
+            
+        payload = {
+            "model": "moondream",
+            "prompt": "Describe this image in detail.",
+            "images": [b64],
+            "stream": True
+        }
+        r = requests.post(OLLAMA_API_URL, json=payload, stream=True)
+        for line in r.iter_lines():
+            if line:
+                data = json.loads(line)
+                print(data.get("response", ""), end="", flush=True)
+        print()
+    except Exception as e:
+        console.print(f"[red]Vision error: {e}[/red]")
+
+def handle_voice(ui):
+    console.print("\n[yellow]Voice Ops: Transcription module not installed.[/yellow]")
+    console.print("To enable local Whisper dictation, please install 'SpeechRecognition' and 'PyAudio'.")
+
+# --- AetherLink Handler ---
+
+def handle_link(ui, args=""):
+    ui.mode = "AETHERLINK"
+    parts = args.strip().split()
+    subcmd = parts[0] if parts else "status"
+
+    if subcmd == "status":
+        status = LINK.get_sync_status()
+        table = Table(title="AetherLink Status", border_style="magenta")
+        table.add_column("Property", style="cyan"); table.add_column("Value")
+        table.add_row("Running", "[green]Yes[/]" if status["running"] else "[red]No[/]")
+        table.add_row("Port", str(status["port"]))
+        table.add_row("Peers Found", str(len(status["discovered_peers"])))
+        table.add_row("Files Received", str(status["stats"]["received"]))
+        table.add_row("Conflicts", str(status["stats"]["conflicts"]))
+        for peer, ts in status["last_sync"].items():
+            table.add_row(f"Last Sync: {peer}", ts)
+        console.print(table)
+
+    elif subcmd == "sync":
+        if len(parts) > 1:
+            ip = parts[1]
+            port = int(parts[2]) if len(parts) > 2 else 8888
+            console.print(f"[yellow]Syncing with {ip}:{port}...[/]")
+            stats = LINK.sync_with_peer(ip, port)
+            console.print(f"[green]Done:[/] fetched={stats['fetched']}, skipped={stats['skipped']}, conflicts={stats['conflicts']}")
+        else:
+            console.print("[yellow]Syncing with all discovered peers...[/]")
+            LINK.auto_sync()
+            console.print("[green]Auto-sync complete.[/]")
+
+    elif subcmd == "peers":
+        peers = LINK.discovery.discovered_peers
+        if not peers:
+            console.print("[dim]No peers discovered on LAN. Ensure zeroconf is installed.[/]")
+        else:
+            table = Table(title="Discovered Peers", border_style="magenta")
+            table.add_column("Name"); table.add_column("IP"); table.add_column("Port")
+            for name, (ip, port) in peers.items():
+                table.add_row(name, ip, str(port))
+            console.print(table)
+
+    else:
+        console.print("[dim]Usage: /link status | /link sync [ip] [port] | /link peers[/]")
+
     console.input("\nPress Enter to return...")
 
 # --- UI & Main ---
@@ -399,8 +497,11 @@ def chat_loop(ui, history):
                 if cmd == "help": handle_help(ui); continue
                 if cmd == "settings": handle_settings(ui); continue
                 if cmd == "memory": handle_memory(ui); continue
+                if cmd.startswith("link"): handle_link(ui, cmd[4:].strip()); continue
                 if cmd == "auto-fix": handle_auto_fix(ui, console.input("Error » ")); continue
                 if cmd == "health": handle_health(ui); continue
+                if cmd.startswith("vision"): handle_vision(ui, cmd[6:].strip()); continue
+                if cmd == "voice": handle_voice(ui); continue
                 if cmd == "clear": os.system('cls' if os.name == 'nt' else 'clear'); console.print(ui.render_header()); continue
                 continue
 
@@ -427,10 +528,15 @@ def chat_loop(ui, history):
             history.append({"role": "assistant", "content": resp})
 
         except KeyboardInterrupt: break
+    
+    # Clean shutdown
+    if CONFIG.get("mcp_enabled"):
+        MCP_MANAGER.stop()
+    LINK.stop()
 
 def main():
     ui = AetherUI()
-    with console.status("[green]Syncing..."): ui.stats["vault_size"] = RAG.index_vault()
+    with console.status("[green]Indexing AetherVault..."): ui.stats["vault_size"] = RAG.index_vault()
     
     if CONFIG.get("mcp_enabled"):
         with console.status("[blue]Starting MCP Servers..."):
@@ -439,15 +545,23 @@ def main():
             except Exception as e:
                 LOGGER.error(f"MCP Startup Error: {e}")
 
+    # Start AetherLink P2P sync
+    with console.status("[magenta]Starting AetherLink P2P..."):
+        try:
+            LINK.start_server()
+            LINK.discovery.start()
+            LINK.start_auto_sync()
+        except Exception as e:
+            LOGGER.error(f"AetherLink Startup Error: {e}")
+
     os.system('cls' if os.name == 'nt' else 'clear')
     console.print(ui.render_header())
     SKILLS.discover_skills(os.getcwd())
     
     mcp_tools = MCP_MANAGER.get_tool_descriptions() if CONFIG.get("mcp_enabled") else ""
+    mcp_section = f"""\nMCP TOOLS (call with JSON arguments):\n{mcp_tools}\n\nTo use an MCP tool, format: TOOL_NAME {{"param": "value"}}""" if mcp_tools else ""
     prompt = f"""You are Aether. Technical Agent.
-PROTOCOL: Use OpenClaw bridge for all actions.
-MCP TOOLS:
-{mcp_tools}
+PROTOCOL: Use OpenClaw bridge for all actions.{mcp_section}
 """
     chat_loop(ui, [{"role": "system", "content": prompt}])
 

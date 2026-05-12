@@ -3,4 +3,7 @@ rich>=13.0.0
 requests>=2.31.0
 psutil>=5.9.0
 chromadb>=0.4.0
-# mcp>=0.1.0 # Required for MCP features in aether-mcp branch
+cryptography>=42.0.0
+zeroconf>=0.131.0
+# MCP SDK requires Python 3.10+. Install manually if on 3.10+:
+# pip install mcp>=1.0.0

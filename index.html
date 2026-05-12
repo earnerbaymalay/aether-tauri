@@ -18,6 +18,7 @@
             <div class="header-right">
                 <span id="system-status" class="status">Checking...</span>
                 <button id="btn-benchmark" class="btn">📏 Benchmark</button>
+                <button id="btn-models" class="btn">🤖 Models</button>
                 <button id="btn-settings" class="btn">⚙️ Settings</button>
             </div>
         </header>
@@ -129,6 +130,123 @@
             </div>
             <div class="nexus-footer">
                 <p id="nexus-status">Status: All shields nominal.</p>
+            </div>
+        </div>
+
+        <!-- Settings Panel (hidden initially) -->
+        <div id="settings-panel" class="nexus-panel hidden">
+            <div class="nexus-header">
+                <h2>AETHER // SETTINGS</h2>
+                <button id="btn-settings-close" class="btn btn-small">✕</button>
+            </div>
+            <div class="settings-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                <div class="nexus-card">
+                    <h3>Uncensored Mode</h3>
+                    <p>Disable safety prompts</p>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-uncensored">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="nexus-card">
+                    <h3>AetherVault RAG</h3>
+                    <p>Contextually inject memories</p>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-rag">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="nexus-card">
+                    <h3>MCP Engines</h3>
+                    <p>Allow multi-server tool execution</p>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-mcp">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="nexus-card">
+                    <h3>Auto-Memory</h3>
+                    <p>Shadow distillation</p>
+                    <label class="switch">
+                        <input type="checkbox" id="setting-auto-memory">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="nexus-card">
+                    <h3>Inference Engine</h3>
+                    <p>Select backend provider</p>
+                    <select id="setting-engine" style="width: 100%; padding: 6px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; margin-top: 8px;">
+                        <option value="ollama">Ollama (Default)</option>
+                        <option value="lmstudio">LM Studio</option>
+                        <option value="llamacpp">llama.cpp</option>
+                    </select>
+                </div>
+                <div class="nexus-card" style="grid-column: span 2;">
+                    <h3>Vault Path</h3>
+                    <input type="text" id="setting-vault-path" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; margin-top: 8px;">
+                </div>
+            </div>
+            <div class="nexus-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <p id="settings-status">Changes apply on next agent restart.</p>
+                <button id="btn-settings-save" class="btn">Save Configuration</button>
+            </div>
+        </div>
+
+        <!-- Models Panel -->
+        <div id="models-panel" class="nexus-panel hidden" style="width: 700px;">
+            <div class="nexus-header">
+                <h2>AETHER // MODEL MANAGER</h2>
+                <button id="btn-models-close" class="btn btn-small">✕</button>
+            </div>
+            <div style="margin-top: 16px;">
+                <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                    <input type="text" id="model-pull-name" placeholder="e.g. llama3.2:3b" style="flex: 1; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px;">
+                    <button id="btn-model-pull" class="btn btn-nexus">Download Model</button>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto; background: var(--bg); border: 1px solid var(--border); border-radius: 4px;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border); color: var(--text-dim); font-size: 11px;">
+                                <th style="padding: 10px;">MODEL NAME</th>
+                                <th style="padding: 10px;">SIZE</th>
+                                <th style="padding: 10px;">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="models-table-body">
+                            <tr><td colspan="3" style="padding: 10px; text-align: center; color: var(--text-dim);">Loading models...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="nexus-footer">
+                <p id="models-status">Connected to local Ollama instance.</p>
+            </div>
+        </div>
+
+        <!-- Vault Browser Panel -->
+        <div id="vault-panel" class="nexus-panel hidden" style="width: 900px; height: 600px; display: none; flex-direction: column;">
+            <div class="nexus-header">
+                <h2>AETHERVAULT // BROWSER</h2>
+                <button id="btn-vault-close" class="btn btn-small">✕</button>
+            </div>
+            <div style="display: flex; flex: 1; gap: 16px; margin-top: 16px; min-height: 0;">
+                <div style="flex: 1; display: flex; flex-direction: column; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; overflow-y: auto;">
+                    <div style="padding: 8px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-size: 11px; position: sticky; top: 0; background: var(--bg);">MEMORY FRAGMENTS</div>
+                    <div id="vault-file-list" style="display: flex; flex-direction: column; padding: 4px;">
+                        <!-- File list populated here -->
+                    </div>
+                </div>
+                <div style="flex: 2; display: flex; flex-direction: column; gap: 8px;">
+                    <input type="text" id="vault-file-name" placeholder="Select a fragment..." readonly style="padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: monospace;">
+                    <textarea id="vault-file-content" style="flex: 1; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; font-family: monospace; resize: none;"></textarea>
+                    <div style="display: flex; justify-content: space-between;">
+                        <button id="btn-vault-delete" class="btn btn-small" style="color: var(--red); border-color: var(--red);">Delete</button>
+                        <button id="btn-vault-save" class="btn btn-small btn-nexus">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+            <div class="nexus-footer">
+                <p id="vault-status">Vault synchronized.</p>
             </div>
         </div>
     </div>
