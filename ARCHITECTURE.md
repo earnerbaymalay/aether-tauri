@@ -1,5 +1,7 @@
 <div align="center">
 
+![Architecture Diagram](assets/architecture_diagram.png)
+
 # 🏛️ Aether — Architecture Guide
 
 *How the neural workstation is built and why.*
