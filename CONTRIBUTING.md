@@ -102,6 +102,19 @@ The following features are tracked as open work items. Contributions welcome:
 
 ---
 
+## 📣 Spread the Word
+
+Aether is a community-driven, open-source effort. If you love what we're building, the biggest contribution you can make is sharing it!
+
+Check out our **[Marketing Kit](docs/marketing/README.md)**. It contains:
+- Pre-written, highly engaging copy for Twitter, Reddit, LinkedIn, Hacker News, and Product Hunt.
+- High-fidelity graphics (`docs/marketing/images/`).
+- An animated, self-contained HTML demo video (`docs/marketing/ANIMATED_DEMO_AD.html`).
+
+Your voice helps us build a stronger sovereign AI ecosystem.
+
+---
+
 ## Submitting Issues
 
 When filing a bug report, please include:

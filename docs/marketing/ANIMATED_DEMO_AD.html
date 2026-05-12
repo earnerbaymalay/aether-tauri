@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether Tauri — The Neural Workstation Demo</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --teal: #58a6ff;
+            --green: #3fb950;
+            --purple: #bc8cff;
+            --text: #e6edf3;
+            --text-dim: #8b949e;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 800px;
+            height: 450px;
+            position: relative;
+            background: radial-gradient(circle at center, #161b22 0%, #0d1117 100%);
+            border: 1px solid var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .scene.active {
+            opacity: 1;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(88, 166, 255, 0.5);
+        }
+
+        .cyan { color: var(--teal); }
+        .green { color: var(--green); }
+        .purple { color: var(--purple); }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* Terminal Window */
+        .terminal {
+            width: 700px;
+            height: 350px;
+            background: #000;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            align-items: flex-start;
+            padding: 0;
+        }
+
+        .term-header {
+            width: 100%;
+            background: #161b22;
+            padding: 8px 0;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .term-dots {
+            display: flex;
+            gap: 6px;
+            margin-left: 12px;
+        }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green-dot { background: #27c93f; }
+
+        .term-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            margin-right: 48px;
+        }
+
+        .term-body {
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--teal);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #typewriter {
+            color: var(--text);
+            white-space: pre-wrap;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--teal);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .card-grid {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid #30363d;
+            padding: 20px;
+            border-radius: 8px;
+            width: 150px;
+        }
+
+        .feature-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+            color: var(--teal);
+        }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--teal);
+            color: var(--teal);
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 20px;
+            font-family: var(--font-mono);
+        }
+        
+        .btn:hover {
+            background: rgba(88, 166, 255, 0.1);
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.4);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <!-- Scene 1: Intro -->
+        <div class="scene" id="scene1">
+            <h1 class="cyan">🌌 AETHER TAURI</h1>
+            <p>Your Hardware. Your AI. Your Rules.</p>
+        </div>
+
+        <!-- Scene 2: Pathways -->
+        <div class="scene" id="scene2">
+            <h2>Select Neural Pathway</h2>
+            <div class="card-grid">
+                <div class="feature-card">
+                    <h3 class="cyan">🤖 AGENT</h3>
+                    <span style="font-family: var(--font-mono); font-size: 0.8rem;">Hermes-3-8B</span>
+                </div>
+                <div class="feature-card">
+                    <h3 class="green">⚡ TURBO</h3>
+                    <span style="font-family: var(--font-mono); font-size: 0.8rem;">Llama-3.2-3B</span>
+                </div>
+                <div class="feature-card">
+                    <h3 class="purple">💻 CODE</h3>
+                    <span style="font-family: var(--font-mono); font-size: 0.8rem;">Qwen-Coder-3B</span>
+                </div>
+            </div>
+            <p style="margin-top: 30px;">Running 100% offline. Zero telemetry.</p>
+        </div>
+
+        <!-- Scene 3: Terminal Demo -->
+        <div class="scene" id="scene3">
+            <div class="terminal">
+                <div class="term-header">
+                    <div class="term-dots">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green-dot"></div>
+                    </div>
+                    <div class="term-title">aether-tauri — agent</div>
+                </div>
+                <div class="term-body">
+                    Aether/Claw » <span id="typewriter"></span><span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scene 4: Ecosystem -->
+        <div class="scene" id="scene4">
+            <h1 class="purple">THE ECOSYSTEM</h1>
+            <p>Aether Tauri <span class="cyan">desktop</span> syncs with Aether <span class="green">Android</span>.</p>
+            <p>One unified, encrypted, P2P memory vault.</p>
+            <div style="font-size: 4rem; margin: 20px 0;">🖥️ ↔️ 📱</div>
+        </div>
+
+        <!-- Scene 5: Outro -->
+        <div class="scene" id="scene5">
+            <h1 class="cyan">SOVEREIGNTY</h1>
+            <p>Take back your computing power.</p>
+            <button class="btn">github.com/earnerbaymalay/aether-tauri</button>
+        </div>
+    </div>
+
+    <script>
+        const scenes = document.querySelectorAll('.scene');
+        let currentScene = 0;
+
+        const typingText1 = "Analyzing system architecture...";
+        const typingText2 = "\n[+] OpenClaw Bridge Active.\n[+] Nexus Shield: Engaged.\n[+] Memory Vault: Indexed.\n";
+        const typingText3 = "\nReady for neural command.";
+        
+        let charIndex = 0;
+        let typingStage = 0;
+        const typewriterEl = document.getElementById('typewriter');
+
+        function typeWriter() {
+            let textToType = "";
+            if (typingStage === 0) textToType = typingText1;
+            else if (typingStage === 1) textToType = typingText2;
+            else if (typingStage === 2) textToType = typingText3;
+
+            if (charIndex < textToType.length) {
+                typewriterEl.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, typingStage === 1 ? 10 : 30);
+            } else {
+                typingStage++;
+                charIndex = 0;
+                if (typingStage < 3) {
+                    setTimeout(typeWriter, 500);
+                }
+            }
+        }
+
+        function nextScene() {
+            scenes[currentScene].classList.remove('active');
+            currentScene = (currentScene + 1) % scenes.length;
+            scenes[currentScene].classList.add('active');
+
+            if (currentScene === 2) {
+                typewriterEl.textContent = "";
+                charIndex = 0;
+                typingStage = 0;
+                setTimeout(typeWriter, 500);
+            }
+        }
+
+        // Init
+        scenes[0].classList.add('active');
+        
+        // Loop scenes
+        setInterval(nextScene, 5000); // 5 seconds per scene
+    </script>
+</body>
+</html>
