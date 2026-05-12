@@ -1,73 +1,162 @@
-# 🌌 Aether Project Ecosystem
+<div align="center">
 
-Welcome to the holistic overview of the Aether ecosystem — a suite of sovereign, local-first neural workstations designed for privacy and autonomy.
+# 🌌 Aether — Ecosystem Guide
+
+*The complete picture of all Aether nodes, shared services, and the unified vision.*
+
+</div>
 
 ---
 
 ## 🏛️ Unified Architecture
 
-The Aether project is built on the **Brain-Nervous System-Hands** architectural pattern:
-- **🧠 The Brain:** Local Large Language Models (LLMs) served via Ollama.
-- **⚡ The Nervous System:** Agentic reasoning loops and the **OpenClaw Hybrid Bridge**.
-- **🛠️ The Hands:** A cross-platform toolbox of scripts and MCP servers for system interaction.
+The Aether project is built on a **Brain–Nervous System–Hands** pattern that scales from a mobile shell to a full desktop workstation:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                           🧠  THE BRAIN                             │
+│            Local LLMs (Ollama): hermes3, qwen, deepseek             │
+└─────────────────────────────────┬───────────────────────────────────┘
+                                  │
+┌─────────────────────────────────▼───────────────────────────────────┐
+│                       ⚡  THE NERVOUS SYSTEM                         │
+│      OpenClaw Hybrid Bridge + MCP Orchestration + AetherLink P2P    │
+└──────────────────┬──────────────────────────────┬────────────────────┘
+                   │                              │
+┌──────────────────▼──────────────┐  ┌────────────▼───────────────────┐
+│       🖥️  Aether-Desktop        │  │       📱  Aether-Droid          │
+│   Tauri (Rust) + TypeScript     │  │   Termux (Bash) + Python        │
+│   Full workstation UI           │  │   Mobile-optimized agent        │
+└─────────────────────────────────┘  └────────────────────────────────┘
+                   │                              │
+┌──────────────────▼──────────────────────────────▼────────────────────┐
+│                       🛠️  THE HANDS                                   │
+│     Toolbox Scripts · MCP Servers · Nexus Shield · AetherFS           │
+└───────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## 🚀 The Workstations
 
-### 🖥️ Aether-Desktop
-- **Platforms:** Linux, Windows, macOS.
-- **Technology:** Rust (Tauri), TypeScript (Frontend), Python (Agent Core).
-- **Core Function:** High-performance neural workstation with real-time system monitoring, vision (Aether Eye), and deep file integration (AetherFS).
-- **Repository:** `aether-desktop` (formerly `aether-tauri`).
+### 🖥️ Aether-Desktop (`aether-tauri`)
 
-### 📱 Aether-Droid
-- **Platforms:** Android (via Termux).
-- **Technology:** Bash, Python, `gum`.
-- **Core Function:** Lightweight mobile agent for on-the-go automation, battery management, and mobile-optimized tool use.
-- **Repository:** `aether-droid` (formerly `aether-android`).
+The primary cross-platform neural workstation.
+
+| Property | Detail |
+| :--- | :--- |
+| **Platforms** | Linux · Windows · macOS |
+| **Frontend** | TypeScript + xterm.js (Tauri WebView) |
+| **Backend** | Rust (Tauri native commands) |
+| **Agent Core** | Python 3.10+ |
+| **Inference** | Ollama (primary) · LM Studio (optional) · llama.cpp (optional) |
+| **Key Features** | Multi-tier Neural Pathways, AetherVault, Nexus Shield, AetherFS, Aether Eye, Neural Monitor |
+
+### 📱 Aether-Droid (`aether-droid`)
+
+The lightweight mobile workstation for on-the-go agentic workflows.
+
+| Property | Detail |
+| :--- | :--- |
+| **Platform** | Android (via Termux) |
+| **Stack** | Bash · Python · `gum` (TUI) |
+| **Key Features** | Mobile-optimized agent, battery management, tool use, AetherVault sync via AetherLink |
+| **Target** | Automation tasks, voice-to-text pipelines, remote device control |
 
 ---
 
-## 🗄️ AetherVault: Shared Sovereign Memory
+## 🗄️ AetherVault — Shared Sovereign Memory
 
-AetherVault is the cross-project knowledge layer that ensures your AI partner learns from every interaction, regardless of the device you are using.
+AetherVault is the **cross-node knowledge layer** that ensures your AI partner learns from every interaction, regardless of device.
 
-- **Markdown-First:** All knowledge is stored as human-readable Markdown files.
-- **Shadow Monitoring:** Conversational facts are distilled in the background.
-- **AetherLink (P2P Sync):** Secure, encrypted synchronization of memory fragments between Desktop and Droid nodes via peer-to-peer networking.
+### Design Principles
+
+- **Markdown-First:** All knowledge is stored as human-readable `.md` files — compatible with Obsidian, Bear, Logseq, or any Markdown editor.
+- **Portable:** The vault is a plain directory. Back it up, version it with Git, or symlink it to a cloud folder if desired.
+- **No LLM vendor lock-in:** The vault is agnostic to which model generated the content.
+
+### Fragment Types
+
+| Prefix | Type | Source |
+| :--- | :--- | :--- |
+| `shadow_*.md` | Auto-distilled | Background Shadow Monitor (TURBO model, silent) |
+| `auto_*.md` | Agent-saved | Explicitly saved by the agent during a task |
+| `*.md` | Manual | User-authored or imported Markdown notes |
+
+### `SYSTEM_PROFILE.md`
+
+A high-level profile document written by Aether to summarize persistent user preferences, recurring patterns, and key facts — analogous to a `CLAUDE.md` but for the personal context layer.
+
+---
+
+## 🔗 AetherLink — P2P Cross-Device Sync
+
+AetherLink (`agent/p2p_sync.py`) provides **encrypted peer-to-peer synchronization** of vault fragments between nodes.
+
+```
+Aether-Desktop (port 8888)  ◄──────────────────►  Aether-Droid (port 8888)
+    ~/.aether/vault/                                   ~/aether-vault/
+       fragments/              Encrypted sync            fragments/
+```
+
+### How It Works
+
+1. A listener thread starts on boot (port 8888) when AetherLink is active.
+2. On connection, nodes exchange fragment hashes to identify deltas.
+3. Missing or updated fragments are transferred with encryption.
+4. Both nodes remain usable during sync (non-blocking).
+
+> **Status:** Alpha. Currently supports basic fragment push/pull. Full conflict resolution is planned for Phase 4.
 
 ---
 
 ## 🦾 OpenClaw Integration
 
-As of May 2026, the Aether ecosystem has been upgraded with the **OpenClaw Hybrid Bridge**. 
+As of v26.05.2, the Aether ecosystem is unified under the **OpenClaw Hybrid Bridge**.
 
-Instead of maintaining separate tool parsers, Aether now leverages the **OpenClaw CLI** as its primary execution engine. This provides:
-1. **Model Context Protocol (MCP)** support out-of-the-box.
-2. **Unified Skills:** Add a skill once, use it on any Aether node.
-3. **Optimized Inference:** Better handling of context windows and model switching.
+### What OpenClaw Provides
+
+| Capability | Benefit |
+| :--- | :--- |
+| **MCP Support** | Out-of-the-box access to any Model Context Protocol server |
+| **Tool Loop** | Battle-tested ReAct-style multi-step tool execution |
+| **Skill Portability** | Skills added to OpenClaw are immediately available in Aether |
+| **Model Routing** | Advanced context window management and model switching |
+
+### Migration from Legacy Tool Parser
+
+Previous versions of Aether included a custom XML/JSON tool parser. This has been fully replaced by the OpenClaw bridge. If you have custom tools, port them as MCP servers or add them to `toolbox/manifest.json` for direct Python dispatch.
+
+---
+
+## 🗺️ Shared Vision & Phases
+
+| Phase | Status | Description |
+| :--- | :--- | :--- |
+| **Phase 1** | ✅ Complete | Local model inference, basic tool loops |
+| **Phase 2** | ✅ Complete | AetherVault memory, Desktop + Droid nodes |
+| **Phase 3** | 🔄 Current | OpenClaw bridge, MCP expansion, AetherLink stabilization |
+| **Phase 4** | 🔮 Planned | Full multimodal (Vision + Voice), autonomous self-improvement, AetherDroid parity |
+
+The long-term goal is a **Self-Evolving Neural Partner** that:
+- Improves its own skills and configuration over time
+- Operates across all your devices with seamless memory continuity
+- Remains entirely under your control with zero cloud dependency
 
 ---
 
 ## 🛡️ Nexus Shield
 
-The shared security and optimization layer for the ecosystem.
-- **Privacy:** One-click telemetry blocking.
-- **Performance:** Dynamic hardware optimization for AI workloads.
-- **Cleanliness:** AI-powered bloatware removal and system maintenance.
+The shared security and system optimization layer.
+
+| Module | Platforms | Description |
+| :--- | :--- | :--- |
+| **Privacy Shield** | Windows · Linux | Blocks telemetry endpoints, ad trackers, and OS data collection |
+| **Gaming Mode** | Windows · Linux | Applies high-performance power plan, disables background throttling |
+| **AI Bloat Killer** | Windows | Disables Copilot, Windows Recall, and related AI services |
+| **Ghost Mode** | All | Dynamic background process deprioritization during inference |
+| **System Deep Clean** | All | Removes cache, temp files, and log accumulations |
 
 ---
 
-## 🗺️ Shared Vision
-
-The goal of the Aether project is to create a truly **Self-Evolving Neural Partner** that exists entirely within your control. 
-
-1. **Phase 1 (Complete):** Local model inference and basic tool loops.
-2. **Phase 2 (Complete):** AetherVault memory and Cross-Platform Desktop/Droid nodes.
-3. **Phase 3 (Current):** OpenClaw Bridge integration and MCP expansion.
-4. **Phase 4 (Coming Next):** Full multimodal awareness (Vision/Voice) and autonomous self-improvement.
-
----
-
-*“Zero bytes leave the device. Total sovereignty over your digital life.”*
+*"Zero bytes leave the device. Total sovereignty over your digital life."*

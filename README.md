@@ -5,9 +5,10 @@
 
 [![Version](https://img.shields.io/badge/version-26.05.2-50fa7b?style=for-the-badge)](VERSIONS.md)
 [![Tauri](https://img.shields.io/badge/framework-Tauri-FFC131?style=for-the-badge&logo=tauri)](https://tauri.app/)
+[![Python](https://img.shields.io/badge/agent-Python%203.10+-3776AB?style=for-the-badge&logo=python)](agent/)
 [![License](https://img.shields.io/badge/license-MIT-f1fa8c?style=for-the-badge)](LICENSE)
 
-**[📲 Download](https://github.com/earnerbaymalay/aether-tauri/releases)** · **[🌐 Sideload Hub](https://earnerbaymalay.github.io/sideload/)** · **[📖 Usage Guide](USAGE.md)** · **[🔧 Troubleshooting](TROUBLESHOOTING.md)**
+**[📲 Install](#-quick-start)** · **[📖 Usage Guide](USAGE.md)** · **[🏛️ Architecture](ARCHITECTURE.md)** · **[🌌 Ecosystem](ECOSYSTEM.md)** · **[🔧 Troubleshooting](TROUBLESHOOTING.md)**
 
 </div>
 
@@ -17,37 +18,49 @@
 
 ## What is Aether?
 
-**Aether is your sovereign neural workstation.** It's designed to be a high-autonomy bridge between you and your local LLMs. By running entirely on your own hardware, Aether ensures that your thoughts, data, and workflows remain private and offline.
+**Aether is your sovereign neural workstation.** It bridges you and your local LLMs through a high-autonomy, tool-augmented interface — running entirely on your own hardware with zero telemetry, zero accounts, and zero cloud dependency.
 
-This repository contains the **Aether-Tauri workstation**, offering a unified, high-performance experience for **Linux**, **Windows**, and **macOS**.
+This repository is the **Aether-Tauri workstation**: a cross-platform desktop application built on Rust (Tauri) and TypeScript, with a Python agentic core. It delivers a unified, high-performance experience on **Linux**, **Windows**, and **macOS**.
+
+> *"Zero bytes leave the device. Total sovereignty over your digital life."*
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Prerequisites (All Platforms)
-- **[Ollama](https://ollama.com/):** Engine for model inference.
-- **[OpenClaw](https://github.com/google/gemini-cli):** The neural backbone for tool and MCP management.
-- **Node.js 20+** & **Rust**: Development toolchain.
+### Prerequisites
 
-### 2. Setup
-Install system dependencies and pull optimized models:
+| Dependency | Purpose | Install |
+| :--- | :--- | :--- |
+| **[Ollama](https://ollama.com/)** | Local model inference engine | `curl -fsSL https://ollama.com/install.sh \| sh` |
+| **[OpenClaw](https://github.com/google/gemini-cli)** | Agentic bridge & MCP orchestration | See OpenClaw docs |
+| **Node.js 20+** | Frontend build toolchain | [nodejs.org](https://nodejs.org) |
+| **Rust** | Tauri native backend | `curl --proto '=https' --tlsf1.2 -sSf https://sh.rustup.rs \| sh` |
+| **Python 3.10+** | Agent core runtime | [python.org](https://python.org) |
+
+### Installation
+
 ```bash
-# Pull recommended agentic models
-ollama pull hermes3:8b
-ollama pull qwen2.5-coder:3b
+# 1. Pull the recommended agentic model stack
+ollama pull hermes3:8b          # Primary agent (tool use + reasoning)
+ollama pull qwen2.5-coder:3b    # Code specialist
+ollama pull deepseek-r1:8b      # Deep logic & planning
 
-# Install dependencies
+# 2. Install frontend and agent dependencies
 npm install
+pip3 install -r requirements.txt
+
+# 3. Make launcher executable (Linux/macOS)
+chmod +x ./aether.sh
 ```
 
-### 3. Launch
-Initialize the OpenClaw gateway and the neural interface:
+### Launch
+
 ```bash
-# Start OpenClaw Gateway (required for bridge mode)
+# Start the OpenClaw gateway (required for bridge mode)
 openclaw gateway --port 18789 --force &
 
-# Launch Aether
+# Launch Aether (starts Ollama if not running, then launches the agent)
 ./aether.sh
 ```
 
@@ -55,41 +68,71 @@ openclaw gateway --port 18789 --force &
 
 ## 🌌 Core Features
 
-- **🦾 OpenClaw Hybrid Bridge:** Offloads complex reasoning and tool execution to the OpenClaw ecosystem while maintaining Aether's native UI.
-- **📊 Aether Neural Monitor:** Real-time TUI dashboard to track the health and metrics of Ollama, OpenClaw, LM Studio, and system resources.
-- **🧠 Multi-Tier Brain:** Optimized model selection (e.g., `HERMES-8B` for agency, `QWEN-3B` for high-speed coding).
-- **🛠️ MCP Integration:** Access to the full Model Context Protocol ecosystem, including DuckDuckGo search and system-wide skills.
-- **🗄️ AetherVault:** A persistent, markdown-based memory system that uses **Neural Distillation** to summarize and store long-term context.
-- **🔒 Zero-Cloud:** No telemetry, no accounts, no subscriptions. Total data sovereignty.
+| Feature | Description |
+| :--- | :--- |
+| **🦾 OpenClaw Hybrid Bridge** | Offloads complex reasoning and tool execution to the OpenClaw CLI ecosystem while keeping Aether's native UI. |
+| **🧠 Multi-Tier Neural Pathways** | Routes queries to the optimal model: `AGENT`, `TURBO`, `CODE`, or `LOGIC`. |
+| **🗄️ AetherVault** | Persistent, markdown-based memory system using background **Shadow Monitor** distillation. Obsidian-compatible. |
+| **📂 AetherFS** | System-wide semantic file search and indexing via the RAG engine. |
+| **🛡️ Nexus Shield** | One-click privacy hardening: telemetry blocking, AI bloat removal, and system deep-clean. |
+| **👁️ Aether Eye** | Real-time screen awareness using local vision models (moondream). |
+| **🔗 AetherLink** | Encrypted P2P memory synchronization across Aether nodes (port 8888). |
+| **🛠️ MCP Integration** | Full Model Context Protocol ecosystem — add tools once, use everywhere. |
+| **📊 Neural Monitor** | Real-time TUI dashboard for Ollama, OpenClaw, LM Studio, and hardware metrics. |
+| **🔒 Zero-Cloud** | No telemetry, no accounts, no subscriptions. |
 
 ---
 
-## 🌌 Universal Computer Use
+## 🧠 Neural Pathways (AI Tiers)
 
-Aether has evolved into a self-evolving neural partner with the following advanced modules:
-- **👻 Ghost Mode:** Dynamic background process monitoring and optimization.
-- **👁️ Aether Eye (Vision):** Real-time screen awareness via `moondream`.
-- **📂 AetherFS:** System-wide semantic search across all local files.
-- **🔗 AetherLink (P2P Sync):** Secure, encrypted cross-device memory synchronization.
+Aether routes your queries to the optimal model based on the task type selected at startup:
 
----
-
-## AI Tiers (Neural Pathways)
-
-| Tier | Model | Best For |
-| :--- | :--- | :--- |
-| 🤖 **AGENT** | `hermes3:8b` | Tool use, complex tasks, memory, and full autonomy. |
-| 💻 **CODE** | `qwen2.5-coder:3b` | Code generation, review, and logic. Optimized for performance. |
-| 🧠 **LOGIC** | `deepseek-r1:8b` | Deep reasoning, architectural planning, and "thinking" mode. |
+| Tier | Model | Best For | Speed |
+| :--- | :--- | :--- | :--- |
+| 🤖 **AGENT** | `hermes3:8b` | Tool use, system ops, complex reasoning, full autonomy | 10–15 t/s |
+| ⚡ **TURBO** | `llama3.2:3b` | Daily questions, summaries, translations, fast responses | 25+ t/s |
+| 💻 **CODE** | `qwen2.5-coder:3b` | Code generation, review, debugging, and refactoring | 18+ t/s |
+| 🧠 **LOGIC** | `deepseek-r1:8b` | Architectural planning, philosophical inquiry, deep analysis | 22+ t/s |
 
 ---
 
-## Documentation
+## 📁 Project Structure
 
-- **[📖 Usage Guide](USAGE.md)** — Deep dive into the Bridge Mode, AetherVault, and Setup.
-- **[🗺️ Roadmap](ROADMAP.md)** — Future development goals and completed integrations.
-- **[🔧 Troubleshooting](TROUBLESHOOTING.md)** — Fixing bridge connections and model errors.
+```
+aether-tauri/
+├── agent/                  # Python agentic core
+│   ├── aether_agent.py     # Main agent loop, UI, and command handlers
+│   ├── mcp_client.py       # MCP server manager
+│   ├── p2p_sync.py         # AetherLink P2P synchronization
+│   ├── rag_engine.py       # AetherFS semantic search (RAG)
+│   ├── skill_loader.py     # Universal skill discovery engine
+│   └── system_scanner.py   # Hardware & dependency detection
+├── src/
+│   ├── main.ts             # Tauri frontend TypeScript
+│   └── styles/app.css      # Design system & component styles
+├── src-tauri/              # Rust/Tauri backend (native commands)
+├── toolbox/                # Cross-platform skill scripts & manifest
+│   └── manifest.json       # Tool registry
+├── tools/
+│   └── monitor.py          # Neural Monitor TUI dashboard
+├── index.html              # Main application shell
+├── aether.sh               # Cross-platform launch script
+└── requirements.txt        # Python dependencies
+```
 
+---
+
+## 📚 Documentation
+
+| Document | Description |
+| :--- | :--- |
+| **[USAGE.md](USAGE.md)** | Complete guide to Bridge Mode, AetherVault, slash commands, and the Neural Monitor |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | Deep-dive into the system design, data flows, and module responsibilities |
+| **[ECOSYSTEM.md](ECOSYSTEM.md)** | Holistic overview of Aether-Desktop, Aether-Droid, AetherVault, and AetherLink |
+| **[ROADMAP.md](ROADMAP.md)** | Completed milestones and upcoming development goals |
+| **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** | Solutions for common build, bridge, model, and permission errors |
+| **[CONTRIBUTING.md](CONTRIBUTING.md)** | Standards, patterns, and contribution workflow |
+| **[VERSIONS.md](VERSIONS.md)** | Changelog and version history |
 
 ---
 
