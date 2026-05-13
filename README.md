@@ -1,7 +1,7 @@
 https://github.com/earnerbaymalay/sideload
 https://earnerbaymalay.github.io
 
-h# ![Aether Banner](docs/assets/aether_banner.png)
+![Aether Banner](docs/assets/aether_banner.png)
 
 <div align="center">
   <h1>🌌 Aether — Tauri Workstation</h1>
