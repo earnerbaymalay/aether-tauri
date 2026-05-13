@@ -37,6 +37,7 @@
       "identifier": "com.aether.tauri",
       "targets": ["deb", "appimage", "dmg", "msi"]
     },
+    "macOSPrivateApi": true,
     "security": {
       "csp": "default-src 'self'; connect-src 'self' http://localhost:*; style-src 'self' 'unsafe-inline'"
     },

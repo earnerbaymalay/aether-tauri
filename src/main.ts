@@ -3,6 +3,19 @@ import { listen } from '@tauri-apps/api/event';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
+// ── Types ──
+type ViewState = 'PATHWAYS' | 'TERMINAL' | 'VAULT' | 'MODELS' | 'SETTINGS' | 'NEXUS';
+
+interface SystemInfo {
+    platform: string;
+    os: string;
+    arch: string;
+    total_memory_mb: number;
+    llama_cli: boolean;
+    aether_dir: boolean;
+    aether_link_active: boolean;
+}
+
 // ── Initialize Terminal ──
 const term = new Terminal({
     cursorBlink: true,
@@ -27,35 +40,70 @@ const term = new Terminal({
 const fitAddon = new FitAddon();
 term.loadAddon(fitAddon);
 
-// ── State ──
+// ── Global State ──
 let currentTier: string | null = null;
+let currentViewState: ViewState = 'PATHWAYS';
+let agentActive = false;
 
-interface SystemInfo {
-    platform: string;
-    os: string;
-    arch: string;
-    total_memory_mb: number;
-    llama_cli: boolean;
-    aether_dir: boolean;
-    aether_link_active: boolean;
-}
+// ── UI Controller ──
+const UI = {
+    views: {
+        PATHWAYS: document.getElementById('pathway-selector'),
+        TERMINAL: document.getElementById('terminal-container'),
+        VAULT: document.getElementById('vault-panel'),
+        MODELS: document.getElementById('models-panel'),
+        SETTINGS: document.getElementById('settings-panel'),
+    },
+    navButtons: document.querySelectorAll('.nav-btn'),
+
+    transitionTo(state: ViewState) {
+        console.log(`Transitioning to ${state}...`);
+        currentViewState = state;
+
+        // 1. Update View Layers
+        Object.entries(this.views).forEach(([viewName, element]) => {
+            if (element) {
+                if (viewName === state) {
+                    element.classList.remove('hidden');
+                } else {
+                    element.classList.add('hidden');
+                }
+            }
+        });
+
+        // 2. Update Sidebar
+        this.navButtons.forEach(btn => {
+            const btnView = btn.getAttribute('data-view');
+            btn.classList.toggle('active', btnView === state);
+        });
+
+        // 3. Special handling for Terminal fitting
+        if (state === 'TERMINAL') {
+            setTimeout(() => fitAddon.fit(), 50);
+        }
+
+        // 4. Specialized View Init
+        if (state === 'VAULT') loadVaultFiles();
+        if (state === 'MODELS') loadModels();
+    }
+};
 
 // ── System Info ──
 async function loadSystemInfo() {
     try {
         const info = await invoke<SystemInfo>('get_system_info');
-        document.getElementById('system-info')!.innerHTML = `
-            <div class="info-row"><span>Platform</span><span>${info.platform}</span></div>
-            <div class="info-row"><span>OS</span><span>${info.os}</span></div>
-            <div class="info-row"><span>Arch</span><span>${info.arch}</span></div>
-            <div class="info-row"><span>Memory</span><span>${(info.total_memory_mb / 1024).toFixed(1)} GB</span></div>
-            <div class="info-row"><span>llama-cli</span><span class="${info.llama_cli ? 'ok' : 'warn'}">${info.llama_cli ? '✓ Found' : '✗ Not found'}</span></div>
-            <div class="info-row"><span>Aether dir</span><span class="${info.aether_dir ? 'ok' : 'warn'}">${info.aether_dir ? '✓ Found' : '✗ Not found'}</span></div>
-            <div class="info-row"><span>AetherLink</span><span class="${info.aether_link_active ? 'ok' : 'warn'}">${info.aether_link_active ? '🟢 Syncing' : '🟡 Disconnected'}</span></div>
+        const dashboard = document.getElementById('system-info')!;
+        dashboard.innerHTML = `
+            <div class="info-row"><span class="label">Platform</span><span class="val">${info.platform}</span></div>
+            <div class="info-row"><span class="label">OS</span><span class="val">${info.os}</span></div>
+            <div class="info-row"><span class="label">Arch</span><span class="val">${info.arch}</span></div>
+            <div class="info-row"><span class="label">Memory</span><span class="val">${(info.total_memory_mb / 1024).toFixed(1)} GB</span></div>
+            <div class="info-row"><span class="label">llama-cli</span><span class="val ${info.llama_cli ? 'ok' : 'warn'}">${info.llama_cli ? '✓' : '✗'}</span></div>
+            <div class="info-row"><span class="label">Aether Dir</span><span class="val ${info.aether_dir ? 'ok' : 'warn'}">${info.aether_dir ? '✓' : '✗'}</span></div>
+            <div class="info-row"><span class="label">AetherLink</span><span class="val ${info.aether_link_active ? 'ok' : 'warn'}">${info.aether_link_active ? '🟢' : '🟡'}</span></div>
         `;
-        document.getElementById('system-status')!.textContent = info.llama_cli ? '🟢 Ready' : '🟡 Setup needed';
     } catch (err) {
-        document.getElementById('system-info')!.innerHTML = `<p class="error">Failed to load: ${err}</p>`;
+        document.getElementById('system-info')!.innerHTML = `<p class="error">Sync Failed: ${err}</p>`;
     }
 }
 
@@ -69,12 +117,6 @@ document.querySelectorAll('.pathway-card').forEach(card => {
 
 async function selectTier(tier: string) {
     currentTier = tier;
-    const models: Record<string, string> = {
-        agent: 'hermes-3-8b.gguf',
-        turbo: 'llama-3.2-3b.gguf',
-        code: 'qwen-coder-3b.gguf',
-        logic: 'deepseek-r1-1.5b.gguf',
-    };
     const labels: Record<string, string> = {
         agent: 'AGENT (Hermes-8B)',
         turbo: 'TURBO (Llama-3B)',
@@ -82,45 +124,53 @@ async function selectTier(tier: string) {
         logic: 'LOGIC (DeepSeek)',
     };
 
-    document.getElementById('pathway-selector')!.classList.add('hidden');
-    document.getElementById('terminal-container')!.classList.remove('hidden');
+    UI.transitionTo('TERMINAL');
     document.getElementById('tier-label')!.textContent = labels[tier];
 
-    // Open terminal
-    const terminalContainer = document.getElementById('terminal')!;
-    terminalContainer.innerHTML = '';
-    term.open(terminalContainer);
-    fitAddon.fit();
+    // Terminal Initialization (only once or on tier change)
+    if (!agentActive) {
+        const terminalContainer = document.getElementById('terminal')!;
+        terminalContainer.innerHTML = '';
+        term.open(terminalContainer);
+        fitAddon.fit();
 
-    // Boot message
-    term.writeln('\x1b[1;34m  ╔══════════════════════════════════════════╗\x1b[0m');
+        setupTerminalInput();
+        agentActive = true;
+    }
+
+    term.writeln('\r\n\x1b[1;34m  ╔══════════════════════════════════════════╗\x1b[0m');
     term.writeln('\x1b[1;34m  ║       🌌  A E T H E R  🌌              ║\x1b[0m');
     term.writeln('\x1b[1;34m  ║   TAURI EDITION // ' + labels[tier].padEnd(18) + '║\x1b[0m');
     term.writeln('\x1b[1;34m  ╚══════════════════════════════════════════╝\x1b[0m');
     term.writeln('');
 
-    // Start Agent Process
     try {
         await invoke('start_agent');
-        
+
         listen('agent-stdout', (event) => {
             const output = event.payload as string;
             term.write(output.replace(/\n/g, '\r\n'));
         });
-        
+
         listen('agent-stderr', (event) => {
             const output = event.payload as string;
             term.write('\x1b[31m' + output.replace(/\n/g, '\r\n') + '\x1b[0m');
         });
     } catch (err) {
         term.writeln(`\x1b[1;31m[!] Failed to start agent: ${err}\x1b[0m`);
-        return;
     }
+}
 
+function setupTerminalInput() {
     let input = '';
     term.onKey(({ key, domEvent }) => {
         if (domEvent.key === 'Enter') {
             term.write('\r\n');
+            // Add "Neural Pulse" effect to container
+            const container = document.getElementById('terminal-container');
+            container?.classList.add('pulse-active');
+            setTimeout(() => container?.classList.remove('pulse-active'), 300);
+
             invoke('send_to_agent', { input: input });
             input = '';
         } else if (domEvent.key === 'Backspace') {
@@ -135,11 +185,16 @@ async function selectTier(tier: string) {
     });
 }
 
-// ── Back button ──
+// ── Navigation ──
+document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const view = btn.getAttribute('data-view') as ViewState;
+        if (view) UI.transitionTo(view);
+    });
+});
+
 document.getElementById('btn-back')?.addEventListener('click', () => {
-    term.dispose();
-    document.getElementById('terminal-container')!.classList.add('hidden');
-    document.getElementById('pathway-selector')!.classList.remove('hidden');
+    UI.transitionTo('PATHWAYS');
     currentTier = null;
 });
 
@@ -150,7 +205,7 @@ document.getElementById('btn-benchmark')?.addEventListener('click', async () => 
 
     term.writeln('\x1b[1;33m[*]\x1b[0m Running benchmark...');
     try {
-        const result = await invoke<BenchmarkResult>('run_benchmark', {
+        const result = await invoke<any>('run_benchmark', {
             args: { model_path: modelPath, threads: 4 }
         });
         term.writeln(`\x1b[1;32m[+]\x1b[0m ${result.tokens_per_sec.toFixed(1)} tokens/sec`);
@@ -158,9 +213,6 @@ document.getElementById('btn-benchmark')?.addEventListener('click', async () => 
         term.writeln(`\x1b[1;31m[!]\x1b[0m Benchmark failed: ${err}`);
     }
 });
-
-// ── Init ──
-loadSystemInfo();
 
 // ── Nexus UI Logic ──
 const nexusPanel = document.getElementById('nexus-panel')!;
@@ -173,36 +225,52 @@ document.getElementById('btn-nexus-close')?.addEventListener('click', () => {
 
 const nexusStatus = document.getElementById('nexus-status')!;
 
+async function runNexusOptimization(type: string, enabled: boolean) {
+    nexusStatus.textContent = `Processing: ${type}...`;
+    try {
+        const result = await invoke<string>('run_nexus_optimization', { optType: type, enabled: enabled });
+        nexusStatus.textContent = `Status: ${result}`;
+    } catch (err) {
+        nexusStatus.textContent = `Error: ${err}`;
+    }
+}
+
+document.getElementById('toggle-privacy')?.addEventListener('change', (e) => {
+    runNexusOptimization('Privacy Shield', (e.target as HTMLInputElement).checked);
+});
+document.getElementById('toggle-gaming')?.addEventListener('change', (e) => {
+    runNexusOptimization('Gaming Mode', (e.target as HTMLInputElement).checked);
+});
+document.getElementById('toggle-ai-bloat')?.addEventListener('change', (e) => {
+    runNexusOptimization('AI Bloat Killer', (e.target as HTMLInputElement).checked);
+});
+document.getElementById('toggle-ghost')?.addEventListener('change', (e) => {
+    runNexusOptimization('Ghost Mode', (e.target as HTMLInputElement).checked);
+});
+document.getElementById('btn-clean')?.addEventListener('click', () => {
+    runNexusOptimization('System Deep Clean', true);
+});
+
 // ── Settings Panel ──
 const settingsPanel = document.getElementById('settings-panel')!;
-const btnSettings = document.getElementById('btn-settings')!;
-const btnSettingsClose = document.getElementById('btn-settings-close')!;
 const btnSettingsSave = document.getElementById('btn-settings-save')!;
 
 let currentSettings: any = {};
 
-btnSettings.addEventListener('click', async () => {
-    settingsPanel.classList.remove('hidden');
-    document.getElementById('settings-status')!.textContent = "Loading configuration...";
+async function loadSettings() {
     try {
         currentSettings = await invoke('get_settings');
-        
         (document.getElementById('setting-uncensored') as HTMLInputElement).checked = currentSettings.uncensored || false;
         (document.getElementById('setting-rag') as HTMLInputElement).checked = currentSettings.rag_enabled !== false;
         (document.getElementById('setting-mcp') as HTMLInputElement).checked = currentSettings.mcp_enabled || false;
         (document.getElementById('setting-auto-memory') as HTMLInputElement).checked = currentSettings.auto_memory !== false;
         (document.getElementById('setting-vault-path') as HTMLInputElement).value = currentSettings.vault_path || "~/Documents/Vault";
         (document.getElementById('setting-engine') as HTMLSelectElement).value = currentSettings.inference_engine || "ollama";
-        
         document.getElementById('settings-status')!.textContent = "Configuration loaded.";
     } catch (e) {
         document.getElementById('settings-status')!.textContent = `Error loading config: ${e}`;
     }
-});
-
-btnSettingsClose.addEventListener('click', () => {
-    settingsPanel.classList.add('hidden');
-});
+}
 
 btnSettingsSave.addEventListener('click', async () => {
     document.getElementById('settings-status')!.textContent = "Saving...";
@@ -212,12 +280,12 @@ btnSettingsSave.addEventListener('click', async () => {
     currentSettings.auto_memory = (document.getElementById('setting-auto-memory') as HTMLInputElement).checked;
     currentSettings.vault_path = (document.getElementById('setting-vault-path') as HTMLInputElement).value;
     currentSettings.inference_engine = (document.getElementById('setting-engine') as HTMLSelectElement).value;
-    
+
     try {
         await invoke('save_settings', { config: currentSettings });
         document.getElementById('settings-status')!.textContent = "Saved! Restart agent to apply.";
         setTimeout(() => {
-            settingsPanel.classList.add('hidden');
+            UI.transitionTo('PATHWAYS');
         }, 1500);
     } catch (e) {
         document.getElementById('settings-status')!.textContent = `Error saving: ${e}`;
@@ -225,27 +293,24 @@ btnSettingsSave.addEventListener('click', async () => {
 });
 
 // ── Model Manager ──
-const modelsPanel = document.getElementById('models-panel')!;
-const btnModels = document.getElementById('btn-models')!;
-const btnModelsClose = document.getElementById('btn-models-close')!;
-const btnModelPull = document.getElementById('btn-model-pull')!;
-const modelPullName = document.getElementById('model-pull-name') as HTMLInputElement;
 const modelsTableBody = document.getElementById('models-table-body')!;
 const modelsStatus = document.getElementById('models-status')!;
+const modelPullName = document.getElementById('model-pull-name') as HTMLInputElement;
+const btnModelPull = document.getElementById('btn-model-pull')!;
 
 async function loadModels() {
-    modelsTableBody.innerHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: var(--text-dim);">Loading models...</td></tr>`;
+    modelsTableBody.innerHTML = `<tr><td colspan="3" class="loading-cell">Loading weights...</td></tr>`;
     try {
         const models = await invoke<any[]>('list_models');
         if (models.length === 0) {
-            modelsTableBody.innerHTML = `<tr><td colspan="3" style="padding: 10px; text-align: center; color: var(--text-dim);">No models found.</td></tr>`;
+            modelsTableBody.innerHTML = `<tr><td colspan="3" class="loading-cell">No models found.</td></tr>`;
             return;
         }
         modelsTableBody.innerHTML = models.map(m => `
-            <tr style="border-bottom: 1px solid var(--border);">
-                <td style="padding: 10px;">${m.name}</td>
-                <td style="padding: 10px;">${m.size}</td>
-                <td style="padding: 10px;">
+            <tr>
+                <td>${m.name}</td>
+                <td>${m.size}</td>
+                <td>
                     <button class="btn btn-small btn-model-delete" data-name="${m.name}" style="color: var(--red); border-color: var(--red);">Delete</button>
                 </td>
             </tr>
@@ -267,23 +332,14 @@ async function loadModels() {
             });
         });
     } catch (e) {
-        modelsTableBody.innerHTML = `<tr><td colspan="3" style="padding: 10px; color: var(--red);">Error loading models: ${e}</td></tr>`;
+        modelsTableBody.innerHTML = `<tr><td colspan="3" class="loading-cell" style="color: var(--red);">Error: ${e}</td></tr>`;
     }
 }
-
-btnModels.addEventListener('click', () => {
-    modelsPanel.classList.remove('hidden');
-    loadModels();
-});
-
-btnModelsClose.addEventListener('click', () => {
-    modelsPanel.classList.add('hidden');
-});
 
 btnModelPull.addEventListener('click', async () => {
     const name = modelPullName.value.trim();
     if (!name) return;
-    modelsStatus.textContent = `Pulling ${name}... this may take a while.`;
+    modelsStatus.textContent = `Pulling ${name}...`;
     btnModelPull.disabled = true;
     try {
         await invoke('pull_model', { name });
@@ -298,9 +354,6 @@ btnModelPull.addEventListener('click', async () => {
 });
 
 // ── Vault Browser ──
-const vaultPanel = document.getElementById('vault-panel')!;
-const btnVault = document.getElementById('btn-context7')!;
-const btnVaultClose = document.getElementById('btn-vault-close')!;
 const vaultFileList = document.getElementById('vault-file-list')!;
 const vaultFileName = document.getElementById('vault-file-name') as HTMLInputElement;
 const vaultFileContent = document.getElementById('vault-file-content') as HTMLTextAreaElement;
@@ -309,20 +362,20 @@ const btnVaultDelete = document.getElementById('btn-vault-delete')!;
 const vaultStatus = document.getElementById('vault-status')!;
 
 async function loadVaultFiles() {
-    vaultFileList.innerHTML = `<div style="padding: 8px; color: var(--text-dim);">Loading...</div>`;
+    vaultFileList.innerHTML = `<div class="loading-cell">Scanning vault...</div>`;
     try {
         const files = await invoke<string[]>('list_vault_files');
         if (files.length === 0) {
-            vaultFileList.innerHTML = `<div style="padding: 8px; color: var(--text-dim);">Vault is empty.</div>`;
+            vaultFileList.innerHTML = `<div class="loading-cell">Vault is empty.</div>`;
             return;
         }
         vaultFileList.innerHTML = files.map(f => `
-            <div class="vault-file-item" data-name="${f}" style="padding: 8px; cursor: pointer; border-bottom: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='transparent'">
+            <div class="vault-item" data-name="${f}">
                 📄 ${f}
             </div>
         `).join('');
 
-        document.querySelectorAll('.vault-file-item').forEach(item => {
+        document.querySelectorAll('.vault-item').forEach(item => {
             item.addEventListener('click', async (e) => {
                 const filename = (e.currentTarget as HTMLElement).getAttribute('data-name');
                 if (!filename) return;
@@ -332,35 +385,27 @@ async function loadVaultFiles() {
                     vaultFileName.value = filename;
                     vaultFileContent.value = content;
                     vaultStatus.textContent = `Loaded ${filename}.`;
+
+                    document.querySelectorAll('.vault-item').forEach(i => i.classList.remove('active'));
+                    (e.currentTarget as HTMLElement).classList.add('active');
                 } catch (err) {
                     vaultStatus.textContent = `Error: ${err}`;
                 }
             });
         });
     } catch (e) {
-        vaultFileList.innerHTML = `<div style="padding: 8px; color: var(--red);">Error: ${e}</div>`;
+        vaultFileList.innerHTML = `<div class="loading-cell" style="color: var(--red);">Error: ${e}</div>`;
     }
 }
-
-btnVault.addEventListener('click', () => {
-    vaultPanel.classList.remove('hidden');
-    vaultPanel.style.display = 'flex'; // override hidden display:none
-    loadVaultFiles();
-});
-
-btnVaultClose.addEventListener('click', () => {
-    vaultPanel.classList.add('hidden');
-    vaultPanel.style.display = '';
-});
 
 btnVaultSave.addEventListener('click', async () => {
     const filename = vaultFileName.value;
     const content = vaultFileContent.value;
     if (!filename) return;
-    vaultStatus.textContent = `Saving ${filename}...`;
+    vaultStatus.textContent = `Syncing ${filename}...`;
     try {
         await invoke('save_vault_file', { filename, content });
-        vaultStatus.textContent = `Saved ${filename}.`;
+        vaultStatus.textContent = `Synchronized ${filename}.`;
     } catch (e) {
         vaultStatus.textContent = `Error saving: ${e}`;
     }
@@ -369,49 +414,24 @@ btnVaultSave.addEventListener('click', async () => {
 btnVaultDelete.addEventListener('click', async () => {
     const filename = vaultFileName.value;
     if (!filename) return;
-    if (confirm(`Are you sure you want to delete ${filename} from AetherVault?`)) {
-        vaultStatus.textContent = `Deleting ${filename}...`;
+    if (confirm(`Delete ${filename} from neural memory?`)) {
+        vaultStatus.textContent = `Deleting...`;
         try {
             await invoke('delete_vault_file', { filename });
-            vaultStatus.textContent = `Deleted ${filename}.`;
             vaultFileName.value = '';
             vaultFileContent.value = '';
             loadVaultFiles();
+            vaultStatus.textContent = `Removed ${filename}.`;
         } catch (e) {
             vaultStatus.textContent = `Error deleting: ${e}`;
         }
     }
 });
 
-async function runNexusOptimization(type: string, enabled: boolean) {
-    nexusStatus.textContent = `Processing: ${type}...`;
-    try {
-        const result = await invoke<string>('run_nexus_optimization', { optType: type, enabled: enabled });
-        nexusStatus.textContent = `Status: ${result}`;
-    } catch (err) {
-        nexusStatus.textContent = `Error: ${err}`;
-    }
-}
-
-document.getElementById('toggle-privacy')?.addEventListener('change', (e) => {
-    runNexusOptimization('Privacy Shield', (e.target as HTMLInputElement).checked);
-});
-
-document.getElementById('toggle-gaming')?.addEventListener('change', (e) => {
-    runNexusOptimization('Gaming Mode', (e.target as HTMLInputElement).checked);
-});
-
-document.getElementById('toggle-ai-bloat')?.addEventListener('change', (e) => {
-    runNexusOptimization('AI Bloat Killer', (e.target as HTMLInputElement).checked);
-});
-
-document.getElementById('toggle-ghost')?.addEventListener('change', (e) => {
-    runNexusOptimization('Ghost Mode', (e.target as HTMLInputElement).checked);
-});
-
-document.getElementById('btn-clean')?.addEventListener('click', () => {
-    runNexusOptimization('System Deep Clean', true);
-});
+// ── Global Initialization ──
+loadSystemInfo();
+loadSettings();
+UI.transitionTo('PATHWAYS');
 
 // ── Multimodal (Vision) ──
 listen<string[]>('tauri://file-drop', event => {

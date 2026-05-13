@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::process::{Command, Stdio, ChildStdin};
 use std::sync::Mutex;
 use std::io::{Read, Write};
-use tauri::{Window, Manager};
+use tauri::Window;
 use std::thread;
 
 struct AppState {
@@ -58,12 +58,12 @@ struct BenchmarkResult {
 
 #[derive(Deserialize)]
 struct BenchmarkArgs {
-    model_path: String,
-    threads: Option<u32>,
+    _model_path: String,
+    _threads: Option<u32>,
 }
 
 #[tauri::command]
-fn run_benchmark(args: BenchmarkArgs) -> Result<BenchmarkResult, String> {
+fn run_benchmark(_args: BenchmarkArgs) -> Result<BenchmarkResult, String> {
     Ok(BenchmarkResult {
         tokens_per_sec: 25.5,
         model: "ollama-benchmark".to_string(),
@@ -77,9 +77,19 @@ fn check_aether_install() -> Result<bool, String> {
     Ok(home.join("aether-droid").exists())
 }
 
+fn get_python_exe() -> String {
+    let current_dir = std::env::current_dir().unwrap_or_default();
+    let venv_python = current_dir.join("venv").join("bin").join("python3");
+    if venv_python.exists() {
+        venv_python.to_string_lossy().to_string()
+    } else {
+        "python3".to_string()
+    }
+}
+
 #[tauri::command]
-fn run_nexus_optimization(opt_type: String, enabled: bool) -> Result<String, String> {
-    let output = Command::new("python3")
+fn run_nexus_optimization(opt_type: String, _enabled: bool) -> Result<String, String> {
+    let output = Command::new(get_python_exe())
         .arg("toolbox/system_optimizer.py")
         .output()
         .map_err(|e| e.to_string())?;
@@ -249,8 +259,12 @@ fn delete_vault_file(filename: String) -> Result<(), String> {
 
 #[tauri::command]
 fn start_agent(window: Window, state: tauri::State<AppState>) -> Result<(), String> {
-    let mut child = Command::new("python3")
+    let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
+    let python_exe = get_python_exe();
+
+    let mut child = Command::new(python_exe)
         .arg("agent/aether_agent.py")
+        .env("PYTHONPATH", current_dir.join("agent").to_string_lossy().to_string())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
