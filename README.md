@@ -87,7 +87,7 @@ Aether isn't just software; it optimizes the hardware it runs on.
 
 Big Tech wants to own your intelligence. Aether puts it back in your hands.
 
-Read our [Ecosystem Guide](ECOSYSTEM.md) for deep dives into our MCP toolsets, or check the [Contributing Guidelines](CONTRIBUTING.md) to help build the open-source neural future.
+Read our **[Master Guide](GUIDE.md)** for a deep dive into the Aether ecosystem, or check the [Contributing Guidelines](CONTRIBUTING.md) to help build the open-source neural future.
 
 <div align="center">
   <i>Built with ❤️ by the open-source community.</i>
