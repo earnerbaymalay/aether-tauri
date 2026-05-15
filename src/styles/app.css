@@ -328,7 +328,7 @@ td {
     box-shadow: var(--neon-glow);
 }
 .setting-card.wide { grid-column: 1 / -1; }
-.setting-card h3 { font-size: 16px; margin-bottom:  la 8px; }
+.setting-card h3 { font-size: 16px; margin-bottom: 8px; }
 .setting-card p { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
 
 /* Peripheral Panel */
@@ -442,7 +442,7 @@ td {
     left: 3px; bottom: 3px;
     background-color: white;
     transition: .4s;
-     la 20px;
+    border-radius: 20px;
 }
 input:checked + .slider { background-color: var(--teal); }
 input:checked + .slider:before { transform: translateX(20px); }

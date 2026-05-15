@@ -257,17 +257,13 @@ def verify_tool_output(intent, tool_name, output):
     except: return "SUCCESS"
 
 def generate_completion_stream(messages, model):
-    # Bridge to OpenClaw Agent
-    # Extract the last user message for the OpenClaw CLI
-    last_user_msg = next((m['content'] for m in reversed(messages) if m['role'] == 'user'), "")
+    payload = {"model": model, "messages": messages, "stream": True, "options": {"num_thread": CONFIG["threads"]}}
     try:
-        # We use --print to get the final output and --quiet to suppress banners
-        cmd = ["openclaw", "agent", "--message", last_user_msg, "--print", "--quiet"]
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
-        for line in process.stdout:
-            yield line
+        r = requests.post(OLLAMA_CHAT_URL, json=payload, stream=True, timeout=120)
+        for line in r.iter_lines():
+            if line: yield json.loads(line.decode("utf-8")).get("message", {}).get("content", "")
     except Exception as e:
-        yield f"OpenClaw Bridge Error: {e}"
+        yield f"Neural Link Error: {e}"
 
 # --- Interaction Handlers ---
 
