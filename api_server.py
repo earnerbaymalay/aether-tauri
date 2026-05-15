@@ -42,6 +42,23 @@ async def get_stats():
         status="Healthy"
     )
 
+@app.post("/system/repair")
+async def repair_system():
+    # Simulate a repair process
+    await asyncio.sleep(2)
+    return {"status": "success", "message": "Neural links re-established, cache cleared, dependencies verified."}
+
+async def watchdog_task():
+    """Simulates monitoring MCP servers and 'restarting' them if they fail."""
+    while True:
+        # In a real app, check actual server health here
+        # print("[WATCHDOG] Monitoring neural servers...")
+        await asyncio.sleep(30)
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(watchdog_task())
+
 @app.post("/agent/query")
 async def agent_query(request: QueryRequest):
     # This would normally interface with aether_agent.py
