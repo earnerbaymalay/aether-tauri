@@ -75,12 +75,11 @@ npm run tauri dev
 
 ---
 
-## 🛠️ The Nexus Shield (System Optimizer)
+## 🛠️ The Nexus Shield & Sideload Hub
 
-Aether isn't just software; it optimizes the hardware it runs on. The built-in **Nexus Shield** provides:
-- **AI Bloat Killer:** Disables aggressive OS telemetry, Copilot, and Recall features.
-- **Ghost Mode:** Dynamically reallocates CPU/RAM from background apps to prioritize local LLM inference.
-- **Privacy Enforcement:** Locks down local firewalls and ad-trackers.
+Aether isn't just software; it optimizes the hardware it runs on.
+- **Nexus Shield:** Built-in system optimizer to kill AI bloat and prioritize local inference.
+- **Sideload Hub:** Aether supports the secure **sideloading** of custom neural skills and third-party MCP servers, allowing you to expand your agent's capabilities without a central app store.
 
 ---
 
