@@ -1,62 +1,95 @@
-https://github.com/earnerbaymalay/sideload
-https://earnerbaymalay.github.io
+<div align="center">
+  <img src="marketing/advertising_kit/images/hero.svg" alt="Aether Neural OS Hero" width="80%" />
+</div>
 
-![Aether Banner](docs/assets/aether_banner.png)
+<h1 align="center">Aether</h1>
+<h3 align="center">The Local-First Neural Operating Interface</h3>
 
 <div align="center">
-  <h1>🌌 Aether — Tauri Workstation</h1>
-  <p><em>The ultimate local‑first neural operating interface.</em></p>
+  
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/Version-26.5.1-teal.svg)](#)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-green.svg)](#)
+
+*Your Data. Your Rules. Uncompromising Intelligence.*
+
 </div>
 
 ---
 
-## 🚀 Why Aether?
+## 🌌 Welcome to the Engine Room
 
-Aether gives you **full sovereignty** over your AI workflows. It runs **entirely on your hardware** – no cloud, no telemetry, no accounts. Compared to other AI tools, Aether:
+Aether is not just a chat interface; it is a **comprehensive, self-healing Neural Operating System** designed to rival the capabilities of big tech's closed ecosystems—while remaining 100% local, private, and under your absolute control.
 
-- **Zero‑cloud**: All models run locally via Ollama.
-- **Hybrid Bridge**: Leverages OpenClaw for tool‑augmented reasoning.
-- **Unified UI**: Combines a premium Tauri desktop experience with a powerful Python agent core.
-- **Extensible**: Plug‑in your own skills, scripts, or custom models with the MCP protocol.
+By fusing a Rust-based desktop environment (Tauri) with a high-performance Python FastAPI backend, Aether coordinates swarms of specialized quantized models (via Ollama/llama.cpp) to execute complex tool loops, index your personal knowledge, and manage background systems.
 
----
+### 🔥 Why Aether?
 
-## ✨ Quick Start
+The era of shipping your intellectual property to corporate servers is over. Aether provides:
 
-1. **Install prerequisites** (Ollama, OpenClaw, Node 20+, Rust, Python 3.10+). See the full guide in [GETTING_STARTED.md](docs/GETTING_STARTED.md).
-2. **Pull recommended models**:
-   ```bash
-   ollama pull hermes3:8b   # General purpose agent
-   ollama pull qwen2.5-coder:3b   # Code specialist
-   ollama pull deepseek-r1:8b   # Deep logical reasoning
-   ```
-3. **Install dependencies** and launch:
-   ```bash
-   npm install           # Front‑end packages
-   pip install -r requirements.txt   # Python agent deps
-   ./aether.sh           # Starts the bridge and UI
-   ```
+1. **Absolute Privacy:** Zero telemetry. Zero external API dependencies required. Your data never leaves your machine.
+2. **Specialized Neural Pathways:** Instantly swap between "Agent" (deep reasoning), "Turbo" (speed), "Code" (development), and "Logic" (planning) profiles tailored to your hardware.
+3. **AetherVault (Local RAG):** A persistent, intelligent memory system. Aether passively distills conversations into Markdown fragments, making it smarter about *you* over time.
+4. **Self-Healing Architecture:** A continuous background watchdog monitors the health of the neural links and MCP (Model Context Protocol) servers, auto-recovering from failures.
+5. **Universal Compatibility:** Works seamlessly across macOS (Mission Control) and Android/Linux (Neural Link) with built-in P2P state synchronization.
 
 ---
 
-## 📚 Documentation
+## 📐 Ecosystem Architecture
 
-- **[GETTING_STARTED.md](docs/GETTING_STARTED.md)** – Step‑by‑step onboarding for all skill levels.
-- **[USAGE.md](USAGE.md)** – Detailed usage guide, slash commands, and advanced workflows.
-- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** – Deep dive into the system design and data flows.
-- **[COMPETITIVE_ANALYSIS.md](docs/COMPETITIVE_ANALYSIS.md)** – How Aether stacks up against other AI platforms.
-- **[ADVANCED_FEATURES.md](docs/ADVANCED_FEATURES.md)** – Full capabilities, customization, and plugin system.
-- **[STYLE_GUIDE.md](docs/STYLE_GUIDE.md)** – Branding, color palette, and UI component standards.
+<div align="center">
+  <img src="marketing/advertising_kit/images/ecosystem-graphic.svg" alt="Aether Ecosystem" width="80%" />
+</div>
 
----
-
-## 🤝 Contribute
-
-We welcome contributions! Please read our updated [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Aether operates on a tri-tier architecture:
+- **Core (Engine Room):** Python FastAPI + Ollama. Manages the LLM inference, RAG indexing, and background watchdogs.
+- **Mission Control (Tauri):** The command center for desktop. Features a high-contrast React UI, terminal integration, and local system optimization tools (Nexus Shield).
+- **Neural Link (Mobile):** Voice-first, high-speed interface for Android, utilizing Zeroconf to sync state directly to your desktop.
 
 ---
 
-## 📜 License
+## 🚀 Quick Start (Zero to Intelligence in 60s)
 
-MIT © 2024‑2026 Aether Team
+Aether features a guided onboarding wizard that automatically audits your hardware and suggests the optimal neural weights.
 
+### Prerequisites
+- Node.js 18+
+- Python 3.9+
+- [Ollama](https://ollama.ai/) installed locally
+
+### Launching Mission Control
+```bash
+# Clone the repository
+git clone https://github.com/earnerbaymalay/aether-tauri.git
+cd aether-tauri
+
+# Install Frontend Dependencies
+npm install
+
+# Start the Engine Room (Core API)
+python3 api_server.py &
+
+# Launch the Tauri App
+npm run tauri dev
+```
+
+---
+
+## 🛠️ The Nexus Shield (System Optimizer)
+
+Aether isn't just software; it optimizes the hardware it runs on. The built-in **Nexus Shield** provides:
+- **AI Bloat Killer:** Disables aggressive OS telemetry, Copilot, and Recall features.
+- **Ghost Mode:** Dynamically reallocates CPU/RAM from background apps to prioritize local LLM inference.
+- **Privacy Enforcement:** Locks down local firewalls and ad-trackers.
+
+---
+
+## 🤝 Join the Rebellion
+
+Big Tech wants to own your intelligence. Aether puts it back in your hands.
+
+Read our [Ecosystem Guide](ECOSYSTEM.md) for deep dives into our MCP toolsets, or check the [Contributing Guidelines](CONTRIBUTING.md) to help build the open-source neural future.
+
+<div align="center">
+  <i>Built with ❤️ by the open-source community.</i>
+</div>
