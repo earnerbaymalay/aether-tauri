@@ -128,6 +128,12 @@ VAULT_PATHS = [VAULT_DIR]
 
 RAG = AetherRAG(VAULT_PATHS)
 LINK = AetherLink(VAULT_DIR)
+SCANNER = SystemScanner()
+SCAN_RESULTS = SCANNER.scan()
+DELEGATION_SUGGESTIONS = SCANNER.get_delegation_suggestions()
+
+# Add suggestions to hints
+HINTS.extend(DELEGATION_SUGGESTIONS)
 
 # --- Logic Classes ---
 
@@ -265,6 +271,43 @@ def generate_completion_stream(messages, model):
     except Exception as e:
         yield f"Neural Link Error: {e}"
 
+def handle_delegate(ui):
+    ui.mode = "DELEGATION"
+    os.system('cls' if os.name == 'nt' else 'clear')
+    console.print(ui.render_header())
+    
+    table = Table(title="AI CLI Delegation Engine", border_style="bright_magenta")
+    table.add_column("AI CLI", style="cyan")
+    table.add_column("Suggestion", style="green")
+    
+    tools = SCAN_RESULTS.get("tools", {})
+    found = False
+    
+    if "aider" in tools:
+        table.add_row("Aider", "Multi-file refactoring and codebase-wide edits.")
+        found = True
+    if "claude" in tools:
+        table.add_row("Claude Code", "Precision coding and high-level architectural changes.")
+        found = True
+    if "interpreter" in tools:
+        table.add_row("Open Interpreter", "System tasks, complex file operations, and data science.")
+        found = True
+    if "gh" in tools:
+        table.add_row("GitHub AI", "PR descriptions, issue summaries, and repo management.")
+        found = True
+    if "fabric" in tools:
+        table.add_row("Fabric", "Modular prompt patterns and structured extraction.")
+        found = True
+        
+    if not found:
+        console.print("[yellow]No specialized AI CLIs detected for delegation suggestions.[/yellow]")
+        console.print("Install tools like [bold]Aider[/], [bold]Claude Code[/], or [bold]Open Interpreter[/] to enable delegation.")
+    else:
+        console.print(table)
+        
+    console.print("\n[dim]Delegation is suggested when a task exceeds local model context or requires specialized system access.[/dim]")
+    console.input("\nPress Enter to return...")
+
 # --- Interaction Handlers ---
 
 def handle_help(ui):
@@ -276,6 +319,7 @@ def handle_help(ui):
     table.add_row("/help", "Display this reference guide")
     table.add_row("/settings", "Configure models, threads, and browser")
     table.add_row("/memory", "Manage AetherVault memory fragments")
+    table.add_row("/delegate", "View AI CLI delegation suggestions")
     table.add_row("/link", "AetherLink P2P sync (status | sync [ip] | peers)")
     table.add_row("/auto-fix", "Self-healing error analysis")
     table.add_row("/health", "Check system vitals and dependencies")
@@ -491,6 +535,7 @@ def chat_loop(ui, history):
                 cmd = user_input[1:].lower()
                 if cmd == "exit": break
                 if cmd == "help": handle_help(ui); continue
+                if cmd == "delegate": handle_delegate(ui); continue
                 if cmd == "settings": handle_settings(ui); continue
                 if cmd == "memory": handle_memory(ui); continue
                 if cmd.startswith("link"): handle_link(ui, cmd[4:].strip()); continue

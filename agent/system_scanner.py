@@ -49,18 +49,40 @@ class SystemScanner:
 
     def _check_tools(self):
         tools = {}
-        check_list = ["node", "npm", "python", "git", "gh", "docker", "ollama", "ffmpeg", "rustc", "cargo", "tauri"]
+        check_list = [
+            "node", "npm", "python", "git", "gh", "docker", "ollama", "ffmpeg", "rustc", "cargo", "tauri",
+            "aider", "claude", "interpreter", "gpt-pilot", "mentat", "sweep", "fabric"
+        ]
         for tool in check_list:
             try:
                 # Some tools use --version, some just version
                 cmd = [tool, "--version"]
                 if tool == "tauri": cmd = ["cargo", "tauri", "--version"]
+                if tool == "claude": cmd = ["claude", "-v"]
                 result = subprocess.run(cmd, capture_output=True, text=True, timeout=2)
                 if result.returncode == 0:
                     tools[tool] = result.stdout.strip().split("\n")[0]
             except:
                 continue
         return tools
+
+    def get_delegation_suggestions(self):
+        """Suggests delegation based on installed AI CLIs."""
+        suggestions = []
+        tools = self.findings.get("tools", {})
+        
+        if "aider" in tools:
+            suggestions.append("Aider is installed. Consider it for complex multi-file refactors.")
+        if "claude" in tools:
+            suggestions.append("Claude Code is available. Excellent for surgical codebase edits.")
+        if "interpreter" in tools:
+            suggestions.append("Open Interpreter detected. Use it for complex system-level tasks and data analysis.")
+        if "gh" in tools:
+            suggestions.append("GitHub CLI found. You can delegate PR reviews or issue management to it.")
+        if "fabric" in tools:
+            suggestions.append("Fabric is available. Use it for extracting patterns and modularizing prompts.")
+            
+        return suggestions
 
     def _discover_projects(self):
         """Heuristic search for user project directories."""
