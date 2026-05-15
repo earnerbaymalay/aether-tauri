@@ -260,6 +260,15 @@ fn delete_vault_file(filename: String) -> Result<(), String> {
 }
 
 #[tauri::command]
+async fn check_api_status() -> bool {
+    let client = reqwest::Client::new();
+    match client.get("http://localhost:8000/").timeout(std::time::Duration::from_millis(500)).send().await {
+        Ok(resp) => resp.status().is_success(),
+        Err(_) => false,
+    }
+}
+
+#[tauri::command]
 fn start_agent(window: Window, state: tauri::State<AppState>) -> Result<(), String> {
     let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
     let python_exe = get_python_exe();
@@ -339,6 +348,7 @@ fn main() {
             read_vault_file,
             save_vault_file,
             delete_vault_file,
+            check_api_status,
             start_agent,
             send_to_agent,
             model_manager::fetch_model_manifest,

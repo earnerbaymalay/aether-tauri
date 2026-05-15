@@ -22,16 +22,10 @@ const SetupWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                     const data = await response.json();
                     setStats(data);
                 } else {
-                    throw new Error('API not available');
+                    setStats(null);
                 }
             } catch (err) {
-                // Fallback to mock data if API fails
-                setStats({
-                    profile: "Lite (Mock)",
-                    ram_gb: 8,
-                    cores: 6,
-                    status: "Healthy"
-                });
+                setStats(null);
             } finally {
                 setLoading(false);
             }

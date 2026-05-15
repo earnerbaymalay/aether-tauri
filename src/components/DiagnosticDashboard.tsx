@@ -18,38 +18,34 @@ const DiagnosticDashboard: React.FC = () => {
         setLogs(prev => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev.slice(0, 9)]);
     };
 
-    const fetchServers = async () => {
+    const fetchStatus = async () => {
         try {
-            // Simulated fetch from API
-            setServers([
-                { id: 'mcp-1', name: 'Memory Graph', type: 'MCP', status: 'online', uptime: '4h 12m' },
-                { id: 'mcp-2', name: 'Web Search', type: 'MCP', status: 'online', uptime: '1h 05m' },
-                { id: 'lsp-1', name: 'Rust Analyzer', type: 'LSP', status: 'online', uptime: '2h 30m' },
-            ]);
+            const response = await fetch('http://localhost:8000/system/stats');
+            if (response.ok) {
+                const data = await response.json();
+                setSystemHealth(data.agent_active ? 100 : 50);
+                
+                // Construct "servers" based on real status
+                setServers([
+                    { id: 'agent-core', name: 'Aether Agent', type: 'Core', status: data.agent_active ? 'online' : 'error', uptime: 'N/A' },
+                    { id: 'api-server', name: 'Engine Room API', type: 'API', status: 'online', uptime: 'N/A' }
+                ]);
+
+                if (data.last_watchdog_event && !logs.includes(data.last_watchdog_event)) {
+                    addLog(data.last_watchdog_event);
+                }
+            }
         } catch (err) {
-            console.error("Failed to fetch servers", err);
+            console.error("Failed to fetch status", err);
+            setSystemHealth(0);
         }
     };
 
     useEffect(() => {
-        fetchServers();
-        const interval = setInterval(() => {
-            // Randomly simulate a server failure for demo purposes
-            setServers(prev => prev.map(s => {
-                if (Math.random() > 0.95 && s.status === 'online') {
-                    addLog(`CRITICAL: Server ${s.name} failed!`);
-                    return { ...s, status: 'error' as const };
-                }
-                return s;
-            }));
-        }, 5000);
+        fetchStatus();
+        const interval = setInterval(fetchStatus, 5000);
         return () => clearInterval(interval);
     }, []);
-
-    useEffect(() => {
-        const errorCount = servers.filter(s => s.status === 'error').length;
-        setSystemHealth(Math.max(0, 100 - (errorCount * 25)));
-    }, [servers]);
 
     const handleRepair = async () => {
         setRepairing(true);
@@ -60,18 +56,13 @@ const DiagnosticDashboard: React.FC = () => {
             if (response.ok) {
                 const data = await response.json();
                 addLog(data.message || "Repair completed successfully.");
-            } else {
-                // Simulating local repair if API fails
-                await new Promise(resolve => setTimeout(resolve, 2000));
             }
         } catch (err) {
-            addLog("Warning: Could not contact repair endpoint. Running local recovery...");
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            addLog("Error: Could not contact repair endpoint.");
         }
 
-        setServers(prev => prev.map(s => ({ ...s, status: 'online' as const })));
+        await fetchStatus();
         setRepairing(false);
-        addLog("Ecosystem restored to nominal state.");
     };
 
     return (
