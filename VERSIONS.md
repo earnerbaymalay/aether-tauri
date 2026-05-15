@@ -23,7 +23,7 @@
 - `aether.sh` now auto-detects `systemctl` vs `ollama serve` for cross-platform Ollama startup.
 
 ### Fixes
-- Standardized project naming: `aether-desktop` (Desktop) and `aether-droid` (Android).
+- Standardized project naming: `aether-tauri` (Desktop) and `aether-droid` (Android).
 - `PYTHONPATH` now correctly set to include `agent/` for all local module imports.
 
 ### Documentation
