@@ -1,0 +1,9 @@
+{
+  "autoFix": {
+    "enabled": true,
+    "lint": "cargo fmt --check",
+    "test": "npm test",
+    "maxRetries": 3,
+    "timeout": 30000
+  }
+}

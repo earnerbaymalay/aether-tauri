@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Aether Session Bundle",
+  "type": "object",
+  "required": ["sessionId", "timestamp", "state"],
+  "properties": {
+    "sessionId": {
+      "type": "string",
+      "pattern": "^AETHER-[0-9a-f]{4}-[0-9a-f]{4}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "state": {
+      "type": "object",
+      "required": ["swarmStages", "loadedMemory", "activeSessionInfo"],
+      "properties": {
+        "swarmStages": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "loadedMemory": {
+          "type": "string"
+        },
+        "activeSessionInfo": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

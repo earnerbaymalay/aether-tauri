@@ -1,5 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod model_manager;
+
 use serde::{Deserialize, Serialize};
 use std::process::{Command, Stdio, ChildStdin};
 use std::sync::Mutex;
@@ -338,7 +340,9 @@ fn main() {
             save_vault_file,
             delete_vault_file,
             start_agent,
-            send_to_agent
+            send_to_agent,
+            model_manager::fetch_model_manifest,
+            model_manager::download_model_from_manifest,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Aether - Tauri");
