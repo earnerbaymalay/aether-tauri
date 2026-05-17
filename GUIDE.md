@@ -6,6 +6,10 @@ Welcome to the vanguard of local intelligence. Aether is not just a tool; it is 
 
 ## 🌓 The Philosophy: Local-First Sovereignty
 
+<div align="center">
+  <img src="docs/assets/aether_banner.png" alt="Aether Banner" width="80%" />
+</div>
+
 In an era where "Big AI" treats your data as raw material for their corporate models, Aether stands as a fortress. 
 - **Privacy as a Default:** Every thought, command, and file stays on your hardware.
 - **Agency as a Feature:** Aether doesn't just talk; it *does*. It interacts with your OS, manages files, and heals itself.
@@ -21,6 +25,11 @@ When you first launch Aether, our **Hardware Auditor** scans your system. It det
 
 ### 2. Selecting Your First Pathway
 Aether uses specialized "Pathways" for different tasks. Don't use a hammer for a needle.
+
+<div align="center">
+  <img src="docs/assets/pathway_selection.png" alt="Pathway Selection" width="60%" />
+</div>
+
 - **`AGENT` (The Generalist):** Use this for 90% of tasks. It's smart, tool-aware, and logical.
 - **`TURBO` (The Speedster):** Best for quick questions, translations, or simple formatting.
 - **`CODE` (The Engineer):** Optimized for deep architectural refactoring and bug hunting.
@@ -29,8 +38,6 @@ Aether uses specialized "Pathways" for different tasks. Don't use a hammer for a
 ### 3. Your First Neural Query
 Once in the terminal, try asking:
 > "Analyze my local environment and tell me how I can optimize my workspace for maximum focus."
-
-Aether will use its local context to provide a personalized response.
 
 ---
 
@@ -48,9 +55,14 @@ Aether doesn't forget. While you chat, the **Shadow Monitor** (a background proc
 ## 🛡️ Phase 3: The Nexus Shield & System Hardening
 
 Aether is also a system optimizer. Use the **Nexus** panel to reclaim your hardware from "AI Bloat".
+
+<div align="center">
+  <img src="docs/assets/nexus_shield_ui.png" alt="Nexus Shield UI" width="60%" />
+</div>
+
 - **Telemetry Killer:** Forcefully disables OS-level tracking (like Windows Recall or macOS analytics) to free up VRAM.
 - **Ghost Mode:** Encrypts your local logs and rotates your neural signatures for maximum anonymity.
-- **Watchdog:** A continuous monitor that ensures your local LLM server (Ollama) and MCP links are healthy. If they crash, the Watchdog auto-restarts them.
+- **Watchdog:** A continuous monitor that ensures your local LLM server (Ollama) and MCP links are healthy.
 
 ---
 
@@ -64,6 +76,10 @@ The **Model Context Protocol (MCP)** is how Aether connects to the world.
 ---
 
 ## 🆘 Troubleshooting & Support
+
+<div align="center">
+  <img src="docs/assets/neural_monitor.png" alt="Neural Monitor" width="60%" />
+</div>
 
 - **Slow Responses?** Check the **Neural Monitor** ( `/health`). You might be running a model too large for your VRAM.
 - **Connection Errors?** Ensure Ollama is running (`ollama serve`) and the `api_server.py` is active.

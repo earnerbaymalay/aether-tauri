@@ -18,7 +18,7 @@ const ModelDownloader: React.FC = () => {
   const [status, setStatus] = useState<string>('');
   const [downloading, setDownloading] = useState<string | null>(null);
 
-  const MANIFEST_URL = 'https://example.com/models.json'; // Replace with actual curated manifest URL
+  const MANIFEST_URL = 'https://raw.githubusercontent.com/earnerbaymalay/aether-tauri/main/agent/models.json';
 
   useEffect(() => {
     fetchManifest();
@@ -50,31 +50,32 @@ const ModelDownloader: React.FC = () => {
   };
 
   return (
-    <div className="model-downloader p-4 border rounded-lg bg-slate-900 text-white">
-      <h2 className="text-xl font-bold mb-4">Model Downloader</h2>
+    <div className="setting-card glass">
+      <h3>Model Registry</h3>
+      <p>Curated neural models optimized for Aether's hardware tiers.</p>
 
-      {loading && <p>Loading manifest...</p>}
+      {loading && <p className="animate-pulse">Loading manifest from registry...</p>}
 
       {status && (
-        <div className="mb-4 p-2 bg-blue-600 rounded text-sm">
+        <div className={`mb-4 p-2 rounded text-sm ${status.includes('Error') ? 'bg-red-900/50' : 'bg-teal-900/50'}`}>
           {status}
         </div>
       )}
 
       {!loading && manifest && (
-        <div className="space-y-2">
+        <div className="space-y-3 mt-4">
           {manifest.models.map((model) => (
-            <div key={model.name} className="flex items-center justify-between p-2 bg-slate-800 rounded">
+            <div key={model.name} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
               <div>
-                <span className="font-medium">{model.name}</span>
-                <span className="text-xs text-slate-400 ml-2">({(model.size / 1024 / 1024).toFixed(2)} MB)</span>
+                <span className="font-medium text-white">{model.name}</span>
+                <div className="text-xs text-slate-400">{(model.size / 1024 / 1024).toFixed(2)} MB</div>
               </div>
               <button
                 onClick={() => downloadModel(model)}
                 disabled={downloading === model.name}
-                className="px-3 py-1 bg-blue-500 hover:bg-blue-600 disabled:bg-slate-600 rounded text-sm transition"
+                className="btn btn-small"
               >
-                {downloading === model.name ? 'Downloading...' : 'Download'}
+                {downloading === model.name ? 'Downloading...' : 'Pull'}
               </button>
             </div>
           ))}

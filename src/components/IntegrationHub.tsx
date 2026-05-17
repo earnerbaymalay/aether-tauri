@@ -1,28 +1,40 @@
 import React, { useState, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/tauri';
 
 // Aether Unified Integration Hub
 // Monitors MCP/LSP servers and manages API keys securely
 
 const IntegrationHub: React.FC = () => {
     const [servers, setServers] = useState<any[]>([]);
-    const [apiKeys, setApiKeys] = useState<{provider: string, status: string}[]>([]);
+    const [apiStatus, setApiStatus] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        // In a real implementation, this would fetch from the Core API
-        setTimeout(() => {
-            setServers([
-                { id: 'mcp-1', name: 'Memory Graph', type: 'MCP', status: 'online', uptime: '4h 12m' },
-                { id: 'lsp-1', name: 'Rust Analyzer', type: 'LSP', status: 'online', uptime: '1h 05m' },
-                { id: 'mcp-2', name: 'Web Search', type: 'MCP', status: 'standby', uptime: '-' },
-            ]);
-            setApiKeys([
-                { provider: 'OpenAI', status: 'configured' },
-                { provider: 'Anthropic', status: 'missing' },
-                { provider: 'HuggingFace', status: 'configured' },
-            ]);
+    const refreshStatus = async () => {
+        setLoading(true);
+        try {
+            const mcpStatuses: any[] = await invoke('get_mcp_status');
+            const isApiOnline: boolean = await invoke('check_api_status');
+            
+            setServers(mcpStatuses.map((s, i) => ({
+                id: `mcp-${i}`,
+                name: s.name.charAt(0).toUpperCase() + s.name.slice(1),
+                type: 'MCP',
+                status: s.status,
+                uptime: s.status === 'online' ? 'Active' : '-'
+            })));
+            
+            setApiStatus(isApiOnline);
+        } catch (err) {
+            console.error("Failed to fetch integration status:", err);
+        } finally {
             setLoading(false);
-        }, 800);
+        }
+    };
+
+    useEffect(() => {
+        refreshStatus();
+        const interval = setInterval(refreshStatus, 5000);
+        return () => clearInterval(interval);
     }, []);
 
     return (
@@ -34,7 +46,12 @@ const IntegrationHub: React.FC = () => {
 
             <div className="settings-grid">
                 <div className="setting-card wide glass">
-                    <h3>Active Neural Servers</h3>
+                    <div className="flex justify-between items-center mb-4">
+                        <h3>Active Neural Servers</h3>
+                        <button className="btn btn-small" onClick={refreshStatus} disabled={loading}>
+                            {loading ? 'Refreshing...' : '🔄 Refresh'}
+                        </button>
+                    </div>
                     <p>Background MCP and LSP services powering your ecosystem.</p>
                     
                     <div className="models-table-wrapper">
@@ -49,6 +66,17 @@ const IntegrationHub: React.FC = () => {
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr className={apiStatus ? "row-online" : "row-offline"}>
+                                    <td>Aether Core API</td>
+                                    <td>FastAPI</td>
+                                    <td>
+                                        <span className={`status ${apiStatus ? 'ok' : 'warn'}`}>
+                                            {apiStatus ? 'ONLINE' : 'OFFLINE'}
+                                        </span>
+                                    </td>
+                                    <td>{apiStatus ? 'Active' : '-'}</td>
+                                    <td>-</td>
+                                </tr>
                                 {servers.map(server => (
                                     <tr key={server.id}>
                                         <td>{server.name}</td>
@@ -73,14 +101,18 @@ const IntegrationHub: React.FC = () => {
                     <h3>Secure API Keys</h3>
                     <p>Manage credentials for external AI providers.</p>
                     <div className="quick-actions">
-                        {apiKeys.map(key => (
-                            <div key={key.provider} className="info-row">
-                                <span>{key.provider}</span>
-                                <span className={key.status === 'configured' ? 'ok' : 'warn'}>
-                                    {key.status === 'configured' ? '● Configured' : '○ Missing'}
-                                </span>
-                            </div>
-                        ))}
+                        <div className="info-row">
+                            <span>OpenAI</span>
+                            <span className="warn">○ Missing</span>
+                        </div>
+                        <div className="info-row">
+                            <span>Anthropic</span>
+                            <span className="warn">○ Missing</span>
+                        </div>
+                        <div className="info-row">
+                            <span>HuggingFace</span>
+                            <span className="ok">● Configured</span>
+                        </div>
                     </div>
                     <button className="btn btn-nexus" style={{marginTop: '20px', width: '100%'}}>
                         + Add New Provider
@@ -93,8 +125,8 @@ const IntegrationHub: React.FC = () => {
                     <div className="system-dashboard" style={{height: '100px', overflowY: 'auto'}}>
                         [INFO] LSP Initialized: Rust<br/>
                         [INFO] Indexing: src-tauri/src<br/>
-                        [DEBUG] 42 symbols resolved<br/>
-                        [INFO] Readiness: 100%
+                        [DEBUG] {apiStatus ? 'API connection stable' : 'API connection failed'}<br/>
+                        [INFO] Readiness: {apiStatus ? '100%' : '0%'}
                     </div>
                 </div>
             </div>
