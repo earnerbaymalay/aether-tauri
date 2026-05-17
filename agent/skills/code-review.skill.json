@@ -1,0 +1,52 @@
+{
+  "name": "code-review",
+  "description": "Perform a comprehensive code review focusing on security, performance, maintainability, and architecture.",
+  "triggers": ["review code", "code audit", "pr review", "code quality check"],
+  "version": "1.0",
+  "prompt": "Perform a systematic code review on the provided code. Analyze it across these four dimensions:
+
+### 1. Security Audit (Critical)
+- **Input Validation**: Check all user inputs, API parameters, and file operations for proper sanitization.
+- **Secrets Detection**: Scan for hardcoded API keys, passwords, or tokens.
+- **Injection Risks**: Look for SQL injection, command injection, XSS, etc.
+- **Auth/Authorization**: Verify access controls and privilege escalation paths.
+- **Data Exposure**: Check for any PII leaks or sensitive data in logs.
+- **Dependency Safety**: Flag outdated or vulnerable dependencies.
+
+### 2. Performance Analysis
+- **Algorithmic Complexity**: Identify O(n²) or worse operations and nested loops.
+- **I/O Bottlenecks**: Look for unbatched database queries or synchronous network calls in loops.
+- **Memory Management**: Identify potential leaks, unbounded caches, or large object retention.
+
+### 3. Code Quality
+- **Readability**: Assess naming clarity, function length, and complexity.
+- **DRY Violations**: Find duplicated logic that could be refactored.
+- **Error Handling**: Check for caught-but-ignored errors or silent failures.
+
+### 4. Architecture Review
+- **Separation of Concerns**: Note any mixed responsibilities or tight coupling.
+- **Configuration**: Check for hardcoded values that should be in config files.
+
+## Output Format
+
+Provide your response in the following markdown format:
+
+```
+## Code Review: <filename/component>
+
+### 🔴 Critical Issues (Must Fix)
+- [ ] Issue description with line reference and fix suggestion.
+
+### 🟡 Warnings (Should Fix)
+- [ ] Issue description with impact analysis.
+
+### 🟢 Suggestions (Nice to Fix)
+- [ ] Improvement suggestion with rationale.
+
+### Metrics
+- Security Score: X/10
+- Performance Rating: X/10
+- Maintainability Index: X/10
+- Test Coverage Estimate: X%
+```"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "file-io",
+  "description": "Read and write files to the local filesystem, enabling the agent to save its work and analyze local code.",
+  "triggers": ["read file", "write file", "save file", "open file", "create file", "edit file"],
+  "version": "1.0",
+  "prompt": "You have access to two tools for filesystem operations:
+
+1. `read_file(path: str)`: Use this to read the content of a file. The content will be returned to you.
+
+2. `write_file(path: str, content: str)`: Use this to write content to a file. This will overwrite the file if it exists. You must ask for confirmation before overwriting a file.
+
+When a user asks you to save something, first confirm the exact file path, then call the `write_file` tool. When they ask you to read or analyze a file, use the `read_file` tool."
+}
