@@ -122,7 +122,7 @@
     },
     {
       "name": "get_sys_info",
-      "description": "Get detailed system information",
+      "description": "Get detailed system hardware and OS information",
       "script": "core_tools.py",
       "enabled": true
     },

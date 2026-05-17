@@ -127,6 +127,12 @@ body {
     margin-bottom: 8px;
 }
 .view-subtitle { font-size: 13px; color: var(--text-dim); }
+.active-model-tag {
+    color: var(--teal);
+    font-family: 'JetBrains Mono', monospace;
+    margin-left: 8px;
+    font-weight: 600;
+}
 
 /* Pathway Cards */
 .pathway-grid {
