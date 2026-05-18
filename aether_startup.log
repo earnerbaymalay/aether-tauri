@@ -1,6 +1,0 @@
-Launching Aether Neural Interface...
-
-> aether-tauri@26.05.1 tauri
-> tauri dev
-
-       Error `package > version` must be a semver string
