@@ -33,6 +33,9 @@
       "active": true,
       "category": "DeveloperTool",
       "copyright": "© 2025-2026 Aether Contributors. MIT License.",
+      "externalBin": [
+        "bin/aether-engine"
+      ],
       "icon": [],
       "identifier": "com.aether.tauri",
       "targets": ["deb", "appimage", "dmg", "msi"]

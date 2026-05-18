@@ -80,33 +80,15 @@ Aether operates on a tri-tier architecture:
 
 ---
 
-## 🚀 Quick Start (For Developers)
+## 🚀 One-Click Setup
 
-### Prerequisites
-- Node.js 18+
-- Python 3.9+
-- [Ollama](https://ollama.ai/) installed locally
+Big Tech wants to own your intelligence. Aether puts it back in your hands—instantly.
 
-### Launching Mission Control
-```bash
-# Clone the repository
-git clone https://github.com/earnerbaymalay/aether-tauri.git
-cd aether-tauri
+1. **[Download Aether for macOS/Windows](https://github.com/earnerbaymalay/aether-tauri/releases/latest)**
+2. **Open the Installer** (Drag to Applications on Mac, Run MSI on Windows).
+3. **Launch.** Aether handles the rest, including local model setup.
 
-# Install Dependencies
-npm install
-
-# Start the Engine Room & Launch Tauri
-./launch-aether.sh
-```
-
----
-
-## 🛠️ The Nexus Shield & Sideload Hub
-
-Aether isn't just software; it optimizes the hardware it runs on and allows for modular expansion.
-- **Nexus Shield:** Built-in system optimizer to kill AI bloat and prioritize local inference.
-- **[Sideload Hub](docs/ADVANCED_FEATURES.md#sideloading):** Aether supports the secure **sideloading** of custom neural skills and third-party MCP servers, allowing you to expand your agent's capabilities without a central app store.
+*No terminal. No Python. No complexity.*
 
 ---
 
