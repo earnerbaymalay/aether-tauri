@@ -207,10 +207,7 @@ const SetupWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                 .badge-pro { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--purple); color: white; font-size: 9px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
                 
                 .btn-launch { background: var(--purple) !important; color: white !important; font-size: 18px !important; padding: 15px 60px !important; }
-            `}</style>
-        </div>
-    );
-            <style>{`
+                
                 .setup-step h3 { font-size: 28px; margin-bottom: 12px; color: var(--text); font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
                 .setup-step p { color: var(--text-dim); line-height: 1.6; font-size: 15px; }
                 .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
