@@ -152,7 +152,8 @@ const App: React.FC = () => {
                         <div className="system-dashboard">
                             <div className="info-row"><span>Status</span><span className="ok">NOMINAL</span></div>
                             <div className="info-row"><span>Mode</span><span>{layoutMode.toUpperCase()}</span></div>
-                             <div className="info-row"><span>Pathway</span><span>{activePathway.title}</span></div>
+                            <div className="info-row"><span>Pathway</span><span>{activePathway.title}</span></div>
+                            <div className="info-row"><span>AetherLink</span><span className="ok" style={{color: 'var(--teal)'}}>SYNCED</span></div>
                         </div>
                     </div>
                     <div className="peripheral-section">
