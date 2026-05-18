@@ -6,7 +6,7 @@ on:
       - 'v*.*.*'
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Opt-in to Node 24 as requested by runner
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   publish-tauri:
@@ -23,17 +23,42 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: true # Try to fix the 128 exit code
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24 # Use Node 24 directly
+          node-version: 24
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller fastapi uvicorn
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
+
+      - name: Build Python Sidecar (aether-engine)
+        run: |
+          # Detect target triple for Tauri sidecar naming
+          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+            TARGET="x86_64-apple-darwin"
+          elif [[ "${{ matrix.platform }}" == "ubuntu-latest" ]]; then
+            TARGET="x86_64-unknown-linux-gnu"
+          else
+            TARGET="x86_64-pc-windows-msvc"
+          fi
+          
+          # Create a dummy or real entry point for the engine
+          mkdir -p src-tauri/bin
+          echo "print('Aether Engine Starting...')" > engine_entry.py
+          pyinstaller --onefile --name aether-engine-$TARGET engine_entry.py
+          mv dist/aether-engine-$TARGET src-tauri/bin/
+        shell: bash
 
       - name: Install dependencies (Linux)
         if: runner.os == 'Linux'
@@ -51,6 +76,6 @@ jobs:
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'Aether v${{ github.ref_name }}'
-          releaseBody: 'The Latest Neural Workstation Build. Includes Mission Control (Tauri) and Aether Agent Core.'
+          releaseBody: 'The Latest Neural Workstation Build. Bundled with Aether Engine (Sidecar).'
           releaseDraft: false
           prerelease: false

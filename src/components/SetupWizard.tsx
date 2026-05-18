@@ -80,13 +80,22 @@ const SetupWizard: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
                                             <span className="value">{stats?.cores} LOGICAL</span>
                                         </div>
                                         <div className="stat-box">
-                                            <span className="label">PROFILE</span>
-                                            <span className="value text-purple">{stats?.profile}</span>
+                                            <span className="label">OLLAMA ENGINE</span>
+                                            <span className={`value ${stats?.status === 'Active' ? 'ok' : 'text-red'}`}>
+                                                {stats?.status === 'Active' ? 'DETECTED' : 'MISSING'}
+                                            </span>
                                         </div>
                                     </div>
                                 )}
                             </div>
-                            {!loading && (
+                            {!loading && stats?.status !== 'Active' && (
+                                <div className="dependency-alert mt-6 glass" style={{ border: '1px solid var(--red)', padding: '20px' }}>
+                                    <p style={{ color: 'var(--red)', fontWeight: 'bold' }}>⚠️ CRITICAL DEPENDENCY MISSING</p>
+                                    <p style={{ fontSize: '13px', margin: '10px 0' }}>Aether requires Ollama to handle local model inference. Please install it to continue.</p>
+                                    <a href="https://ollama.ai/download" target="_blank" className="btn btn-small" style={{ background: 'var(--red)', color: 'white' }}>Download Ollama</a>
+                                </div>
+                            )}
+                            {!loading && stats?.status === 'Active' && (
                                 <div className="alert-box mt-6">
                                     <span className="icon">🛡️</span>
                                     <span>Nexus Shield active. OS telemetry suppression confirmed.</span>
