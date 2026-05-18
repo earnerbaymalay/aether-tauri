@@ -17,7 +17,7 @@
 
 *Your Data. Your Rules. Uncompromising Intelligence.*
 
-[**Explore the Guide**](GUIDE.md) | [**View Architecture**](docs/ARCHITECTURE.md) | [**Daily Usage**](USAGE.md) | [**Roadmap**](ROADMAP.md)
+[**⬇️ Download Aether**](docs/DOWNLOAD.md) | [**Explore the Guide**](GUIDE.md) | [**View Architecture**](docs/ARCHITECTURE.md) | [**Roadmap**](ROADMAP.md)
 
 </div>
 

@@ -77,4 +77,17 @@ When **Aether Eye** is triggered, it takes a fast, local screenshot and passes i
 
 ---
 
+## 6. Sideloading Neural Skills
+
+<a id="sideloading"></a>
+
+Aether is built to be modular. You don't have to wait for us to add a feature; you can **sideload** it yourself.
+
+### How to Sideload
+1. **Toolbox Skills:** Drop any Python script into the `toolbox/` folder. Aether will automatically detect it and add it to the agent's toolkit.
+2. **MCP Servers:** As shown in the MCP section, you can add any third-party MCP server to your `config.json`.
+3. **Skill Marketplace:** Browse the [Marketplace](https://github.com/earnerbaymalay/aether-tauri#marketplace) to find community-vetted skills that you can install with one click.
+
+---
+
 *Ready to troubleshoot or dig into the code? Check the [Troubleshooting Guide](../TROUBLESHOOTING.md) or [Architecture Reference](ARCHITECTURE.md).*
