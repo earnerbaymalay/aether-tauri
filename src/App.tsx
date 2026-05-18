@@ -3,8 +3,11 @@ import SetupWizard from './components/SetupWizard';
 import DiagnosticDashboard from './components/DiagnosticDashboard';
 import QRSync from './components/QRSync';
 import IntegrationHub from './components/IntegrationHub';
+import Marketplace from './components/Marketplace';
+import SecurityDashboard from './components/SecurityDashboard';
+import SettingsUI from './components/SettingsUI';
 
-type View = 'PATHWAYS' | 'DIAGNOSTICS' | 'INTEGRATION' | 'SYNC' | 'SETTINGS';
+type View = 'PATHWAYS' | 'DIAGNOSTICS' | 'INTEGRATION' | 'SYNC' | 'SETTINGS' | 'MARKETPLACE' | 'SECURITY';
 type LayoutMode = 'mission-control' | 'neural-link';
 
 interface Pathway {
@@ -67,8 +70,10 @@ const App: React.FC = () => {
                 <div className="nav-group">
                     {[
                         { id: 'PATHWAYS', icon: '🌌', label: 'Pathways' },
-                        { id: 'DIAGNOSTICS', icon: '🩺', label: 'Diagnostics' },
+                        { id: 'DIAGNOSTICS', icon: '🩺', label: 'Health' },
                         { id: 'INTEGRATION', icon: '🔌', label: 'Integrations' },
+                        { id: 'MARKETPLACE', icon: '🏪', label: 'Marketplace' },
+                        { id: 'SECURITY', icon: '🛡️', label: 'Security' },
                         { id: 'SYNC', icon: '📱', label: 'Neural Link' }
                     ].map(item => (
                         <button 
@@ -124,26 +129,10 @@ const App: React.FC = () => {
 
                     {view === 'DIAGNOSTICS' && <DiagnosticDashboard />}
                     {view === 'INTEGRATION' && <IntegrationHub />}
+                    {view === 'MARKETPLACE' && <Marketplace />}
+                    {view === 'SECURITY' && <SecurityDashboard />}
                     {view === 'SYNC' && <QRSync />}
-                    {view === 'SETTINGS' && (
-                        <div className="view-layer">
-                            <div className="view-header">
-                                <h2>System Settings</h2>
-                            </div>
-                            <div className="settings-grid">
-                                <div className="setting-card">
-                                    <h3>Model Configuration</h3>
-                                    <p>Primary: {activePathway.model}</p>
-                                    <button className="btn btn-small">Change Model</button>
-                                </div>
-                                <div className="setting-card">
-                                    <h3>Neural Vault</h3>
-                                    <p>Path: ~/.aether/vault</p>
-                                    <button className="btn btn-small">Change Path</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    {view === 'SETTINGS' && <SettingsUI />}
                 </main>
 
                 <aside className="peripheral">
@@ -160,7 +149,7 @@ const App: React.FC = () => {
                         <h3 className="section-label">QUICK ACTIONS</h3>
                         <div className="quick-actions">
                             <button className="btn btn-small btn-nexus" onClick={() => setView('SYNC')}>Sync Mobile</button>
-                            <button className="btn btn-small" onClick={() => setView('DIAGNOSTICS')}>Run Health Check</button>
+                            <button className="btn btn-small" onClick={() => setView('MARKETPLACE')}>Browse Skills</button>
                         </div>
                     </div>
                 </aside>
