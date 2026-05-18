@@ -7,6 +7,8 @@ on:
 
 jobs:
   publish-tauri:
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -16,11 +18,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18 # Using Node.js version 18
+          node-version: 20 # Upgraded to Node.js 20
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable

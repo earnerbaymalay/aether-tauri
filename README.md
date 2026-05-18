@@ -102,6 +102,14 @@ npm install
 
 ---
 
+## 🛠️ The Nexus Shield & Sideload Hub
+
+Aether isn't just software; it optimizes the hardware it runs on and allows for modular expansion.
+- **Nexus Shield:** Built-in system optimizer to kill AI bloat and prioritize local inference.
+- **[Sideload Hub](docs/ADVANCED_FEATURES.md#sideloading):** Aether supports the secure **sideloading** of custom neural skills and third-party MCP servers, allowing you to expand your agent's capabilities without a central app store.
+
+---
+
 ## 🤝 Join the Rebellion
 
 Big Tech wants to own your intelligence. Aether puts it back in your hands.
