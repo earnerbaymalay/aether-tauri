@@ -1,6 +1,10 @@
 # 🧭 Aether Neural OS: The Master Guide
 
-Welcome to the vanguard of local intelligence. Aether is not just a tool; it is your private, self-healing, and uncompromising neural workstation. This guide will take you from your first boot to advanced system orchestration.
+> [!CAUTION]
+> **Alpha Access:** Aether is undergoing rapid architectural evolution. Automated installers are pending. Build from source for the latest stable pathways.
+
+Welcome to the vanguard of local intelligence.
+ Aether is not just a tool; it is your private, self-healing, and uncompromising neural workstation. This guide will take you from your first boot to advanced system orchestration.
 
 ---
 

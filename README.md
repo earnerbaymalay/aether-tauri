@@ -12,6 +12,9 @@
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-green.svg)](#)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25%20Local-green.svg)](#)
 
+> [!IMPORTANT]
+> **Current Status: Alpha Release.** Aether is currently in early development. Public binary releases are not yet available. Please follow the instructions below to build Mission Control from source.
+
 *Your Data. Your Rules. Uncompromising Intelligence.*
 
 [**Explore the Guide**](GUIDE.md) | [**View Architecture**](docs/ARCHITECTURE.md) | [**Daily Usage**](USAGE.md) | [**Roadmap**](ROADMAP.md)
